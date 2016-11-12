@@ -1,0 +1,20 @@
+: zombers 2 %zombs ;
+
+regiondef{
+
+	region: industrytest
+		w: 15
+		h: 15
+		max-locs: 1
+		script: 20 o'clock
+		post-script: 10diff %zombs
+		
+		inside no-prefab
+
+		"REGION LOCATIONS" print
+					
+		loc-choice: sewer-easy
+			loc-weight: 99
+			loc-count: 1
+
+}

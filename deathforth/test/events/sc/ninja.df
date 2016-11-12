@@ -1,0 +1,47 @@
+uses base.df
+uses charfilt.df
+uses charstats.df
+uses road.df
+
+cyoa{ road{
+
+: ninja-restock
+	15 stpick choosechar
+	WEAPON_SHURIKEN cchar .weapona! 7 cchar .stackeda!
+	WEAPON_SHURIKEN cchar .weapon_nodropa!
+	WEAPON_SMOKEBOMB cchar .weaponb! 5 cchar .stackedb! 
+	WEAPON_SMOKEBOMB cchar .weapon_nodropb!
+;
+
+cyoa: ninja-timeup
+	15 stpick choosechar cicon
+	"Ninja Vanish!" cyoa-title!
+	solo if 
+		($ "The ninja" pbold .. " was about to slam down a smoke bomb and disappear mysteriously, but there's no one around to witness it. What's the fun in that?
+		She decides to stick around for a bit longer." $) cyoa-text!
+		5 8 rnd to ninja-countdown goodfx
+	then;
+	($ "The ninja" pbold .. " strikes a dramatic crossed-arms pose. Her headband flutters in the wind.
+	" .. "Looks like... my work is done." pbold .. "
+		She slams a smoke bomb into the ground and disappears, leaving nothing behind but a small satchel.
+		The satchel is full of smoke bombs!
+		" .. "TO-DO: Make her leave some smoke bombs behind" rbold $) cyoa-text!
+;
+
+cyoa: ninja-despair
+	bully choosechar cicon
+	"Ninja Tantrum!" cyoa-title!
+	($ cname .. " kicks her door open.
+	" .. "Screw this!" pbold .. "
+	She tumbles out of the car, does a backflip, lands into a crouch, stands up, then throws a smoke bomb and vanishes." $) cyoa-text!
+	TEAM_STATUS_BAD_LEFT cchar .decruit
+	team-count 0 = if
+		"The car drives on for a bit but eventually comes to a stop." +cr +text
+	else
+		($ Thegroup .. " is both startled and impressed by this." $) +cr +text
+	then
+;
+
+} }
+
+

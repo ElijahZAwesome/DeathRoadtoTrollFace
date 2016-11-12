@@ -1,0 +1,20 @@
+: zombers 2 %zombs ;
+
+regiondef{
+
+	region: easyopen1
+		w: 40
+		h: 23
+		max-locs: 1
+		script: timeofday o'clock
+		post-script: 10diff %zombs
+
+		inside
+
+		"REGION LOCATIONS" print
+					
+		loc-choice: open1 house
+			loc-weight: 99
+			loc-count: 1
+
+}

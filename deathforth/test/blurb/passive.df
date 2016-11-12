@@ -1,0 +1,83 @@
+
+: turn-back // Random first person, random single responder, stuff happens.
+	blurbslot 0= if
+		"Maybe we should turn back..." blurbsay
+	else
+		blurbslot 2 < if
+			"Maybe you should shut up!" blurbsay
+			STAT_MORALE me .stat++
+			STAT_MORALE 1st-char .stat--
+		then
+	then
+;
+
+: slow-down
+	2nd-char choosechar
+	blurbslot 0= if
+		"Could we slow down a little?" blurbsay
+	else
+		blurbslot 2 < if
+			ctemper+ not if
+				($ "Could you shut up a little?" $) blurbsay
+				STAT_MORALE 1st-char .stat--
+		else
+			"Sure, whatever." blurbsay
+			STAT_MORALE 1st-char .stat++
+		then then
+	then
+;		
+
+	: passive-oneline1 "Is this the right way?" ;
+	: passive-oneline2 "Well, no use turning back now." ;
+	: passive-oneline3 "Let's try to avoid any unnecessary risks..." ;
+	: passive-oneline4 "Maybe if we just stay put this whole zombie thing will blow over." ;
+	: passive-oneline5 "There's nothing wrong with taking detours if they're safer." ;
+// VVVVVVVV JONZ BLURBZ VVVVVVVVV
+	: passive-oneline6 "Maybe we should just pass the next town." ;
+	: passive-oneline7 "Maybe we shouldn't bring much attention to ourselves." ;
+	: passive-oneline8 "Just sneak in, grab what we need, then get out of there." ;
+	: passive-oneline9 "Maybe we should slow down a little." ;
+	: passive-oneline10 "Does this seem like a good idea?" ;
+	: passive-oneline11 "Couldn't we just go around the zombies?" ;
+	: passive-oneline12 "Couldn't we all just get along?" ;
+	: passive-oneline13 "Maybe if we leave the zombies alone they'll leave us alone." ;
+	: passive-oneline14 "I'd rather not fight if we don't have to." ;
+	: passive-oneline15 "Maybe going and shooting everything isn't the best idea?" ;
+// VVV 5/20 nothing yet
+
+	
+	
+	deck-new
+		card: passive-oneline1
+		card: passive-oneline2
+		card: passive-oneline3
+		card: passive-oneline4
+		card: passive-oneline5
+		card: passive-oneline6
+		card: passive-oneline7
+		card: passive-oneline8
+		card: passive-oneline9
+		card: passive-oneline10
+		card: passive-oneline11
+		card: passive-oneline12
+		card: passive-oneline13
+		card: passive-oneline14
+		card: passive-oneline15
+		
+	constant PASSIVE-ONELINERS
+	PASSIVE-ONELINERS var passive-oneliners
+
+: passive-oneliner
+	passive-oneliners depths 0= if PASSIVE-ONELINERS shuffles to passive-oneliners then
+	blurbslot 0= if
+		passive-oneliners drawcard blurbsay
+	then
+;
+
+	deck-new
+		card: turn-back
+		card: slow-down
+		15 cards: passive-oneliner
+
+	constant BLURB-DECK-PASSIVE
+	BLURB-DECK-PASSIVE var blurb-deck-passive

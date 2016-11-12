@@ -1,0 +1,342 @@
+		
+location tags: rescueapartment
+		max-rooms: 12
+		entry-tags: aptlobby
+		script: set-theme-house
+		pre-script: set-theme-house
+		post-script: 
+	"
+		room-choice: aptlobby
+			room-script: ndx
+			room-post-script: dhall 10diff %zombs
+			room-weight: 1
+			room-count: 1
+			filter-only
+			
+		room-choice: hall
+			room-weight: 360
+			room-count: 1
+			room-script: ndx
+			room-post-script: 10diff %zombs
+		
+		room-choice: bedroom
+			room-weight: 200
+			room-count: 3
+			room-script: nad
+			room-post-script: dbathroom 10diff %zombs
+
+		room-choice: closet
+			room-weight: 1
+			room-count: 1
+			room-script: nad
+
+		room-choice: kitchen
+			room-weight: 70
+			room-count: 1
+			room-script: nad floor-kitchen 10diff %zombs		
+	
+		room-choice: bathroom
+			room-weight: 1
+			room-count: 4
+			room-script: nad floor-bath	
+	"		
+		constant rescueapartment
+		rescueapartment evaluate
+		
+		room-choice: bedroom
+			room-weight: 200
+			room-count: 1
+			room-script: nad
+			room-post-script: new-rescue-npc
+
+location tags: rescuedogapartment
+		max-rooms: 12
+		entry-tags: aptlobby
+		script: set-theme-house
+		pre-script: set-theme-house
+
+		rescueapartment evaluate
+
+		room-choice: bedroom
+			room-weight: 200
+			room-count: 1
+			room-script: nad
+			room-post-script: new-rescue-dog
+		
+cyoa{		
+
+cyoa-choice: arcade-vidcon2
+	($ cname .. " starts taking the arcade machine apart to see how it runs.
+	After some quick rooting around, " .. che .. " figures out the reason.
+	It turns out all these old arcade machines are gas powered! " .. cname .. " carefully drains the gas out of its compartment." $) cyoa-text!
+	goodfx 40 70 rnd LOOT_GAS spawnloot clear-cyoa
+;
+
+: arcade-names
+	1 6 rnd case
+		1 of "DEATH ROAD TO CANADA" endof
+		2 of "DEATH SPLATTERS" endof
+		3 of "TOUCH OF DEATH" endof
+		4 of "POLYBIUS" endof
+		5 of "DEATHSPLOSIONAL" endof
+		6 of "U*L*T*R*A*D*E*A*T*H" endof
+	endcase
+;
+		
+cyoa-choice: arcade-vidcon1
+	($ cname .. " plays an old arcade game named " .. arcade-names fbold .. " and really gets into it.
+	Like all video games ever made, playing it increases your skills with guns. The critics were right.
+	Before " .. cname .. " knew it, 3 hours had passed." $) cyoa-text!
+		shooting++ morale++ goodfx shootingREV
+		clear-cyoa o'clock@ 3 + o'clock 5 15 rnd .zombspawn
+;
+
+cyoa: arcade-vidcon
+	"Arcade Break" cyoa-title!
+	pchar choosechar cicon
+	"This arcade machine seems to be working! It's not very clear how it can run without electricity." cyoa-text!
+	team-nearby? not if
+		($ "If " .. pname .. " had someone nearby to watch out for zombies, " .. phe .. " could play it." $) +crtext
+	else
+		($ pname .. " considers taking videogame break while " .. phe .. " is guarded." $) +crtext
+		pchar charchoice( " plays the arcade game" )choice: arcade-vidcon1
+		cmechanic+ if
+			pchar charchoice( " dismantles the arcade machine" )choice: arcade-vidcon2
+		then
+	then
+	choice( "Leave it for now" )choice
+;
+
+}
+			
+map{ roomgen{
+			
+: arcademachine
+	spawn special_objects32_base_id 0x 8 + lt .spriteid!
+	bbox immovable as-metal 1 health!
+;
+: arcade-on
+	arcademachine cyoa{ ' arcade-vidcon cyoa! }
+;	
+
+: smallarcade
+	spawn special_objects32_base_id 0x c + lt .spriteid!
+	15 health! bbox 5weight as-metal
+;
+
+: clawmachine
+	spawn special_objects32_base_id 0x d 
+	80 %chance if 1 + then
+	+ lt .spriteid! rndflip
+	15 health! bbox 4weight as-metal
+;
+	
+} }
+			
+location
+		tags: arcade
+		max-rooms: 2
+		entry-tags: arcade
+		script: set-theme-arcade
+
+		room-choice: arcade
+			room-weight: 10
+			room-count: 1
+			room-script: 
+			room-post-script: 10diff %zombs map{ room-garbage }
+			filter-only		
+
+		room-choice: restroom
+			room-weight: 10
+			room-count: 1
+			room-script: floor-bath
+			
+			
+location
+		tags: restaurant
+		max-rooms: 4
+		entry-tags: restaurant
+		script: set-theme-restaurant
+		post-script: 10diff %zombs nad
+
+	: restaurant-start
+		random-door "restroom" only-with-door
+		random-door "rest-kitchen" only-with-door
+		10diff %zombs
+	;		
+
+	: restaurant-loot 0 2 rnd for 1 LOOT_FOOD spawnscat next skelscat 30 %chance if skelscat then ;
+	
+	: rest-kitchenrooms
+		random-door "rest-storage" only-with-door
+		restaurant-loot
+	;		
+
+		room-choice: restaurant
+			room-weight: 10
+			room-count: 1
+			room-script: 
+			room-post-script: restaurant-start map{ room-garbage }
+			filter-only		
+
+		room-choice: restroom
+			room-weight: 10
+			room-count: 1
+			room-script: floor-bath
+			
+		room-choice: rest-kitchen 
+			room-weight: 10
+			room-count: 1
+			room-script: floor-kitchen 
+			room-post-script: rest-kitchenrooms
+			
+		room-choice: rest-storage
+			room-weight: 10
+			room-count: 1
+			room-script: floor-kitchen
+			filter-only
+
+			
+cyoa{
+
+: coffeed pchar statmod{ .coffee } ;
+: coffeed? pchar statmod{ .coffee? } ;
+
+cyoa-choice: coffee-get2
+	($ cname .. " uses all " .. chis .. " mechanical skills to figure out what the many, many buttons on the coffee brewer do.
+	" .. cHe .. " makes the perfect cup of coffee! It's delicious!
+	The coffee machine sparks, emits smoke, and dies." $) cyoa-text!
+		pchar statmod{ dup .coffee .unsick }
+		morale2+ goodfx clear-cyoa mechanicREV
+;
+
+cyoa-choice: coffee-get1
+	pchar statmod{ .sick? } if
+		($ cname .. " is feeling too sick to enjoy coffee that's been sitting in a machine for what might be years." $) cyoa-text! badfx 50 %chance if ouch-- then
+	then;
+	coffeed? if
+		($ cname .. " drinks EVEN MORE coffee and then feels pretty sick afterwards. 
+		It's hard to say if it was the massive amount of caffeine, the filthy cups, or how the coffee has been rotting for an unknown amount of time." $) cyoa-text! badfx pchar statmod{ dup .sick .uncoffee }
+	else
+		($ cname .. " sprays some coffee into an old cup lying around and then drinks it.
+		" .. cHe .. " feels all COFFEE'D UP." $) cyoa-text!
+			goodfx coffeed
+	then
+;
+
+cyoa: coffee-get
+	"Apocalyptic Coffee" cyoa-title!
+	pchar choosechar cicon
+	"This enormous and complex coffee machine was built to survive a few different kinds of end of the world scenarios. This was a big part of this coffee shop's marketing campaign.
+	Truth in advertising, it still works!" cyoa-text!
+		pchar charchoice( " gets some COFFEE" )choice: coffee-get1
+		cmechanic+ if
+			pchar charchoice( " messes with the settings" )choice: coffee-get2
+		then
+	choice( "Leave it alone" )choice
+;
+
+}
+		
+map{ roomgen{
+
+: coffeemachine
+	indfurnace
+	cyoa{ ' coffee-get cyoa! }
+;
+} }
+			
+location
+		tags: coffee
+		max-rooms: 2
+		entry-tags: coffee
+		script: set-theme-restaurant
+
+		room-choice: coffee
+			room-weight: 10
+			room-count: 1
+			room-script: 
+			room-post-script: 10diff %zombs map{ room-garbage }
+			filter-only		
+
+		room-choice: restroom
+			room-weight: 10
+			room-count: 1
+			room-script: floor-bath
+			
+map{ roomgen{
+
+: storefurniture
+	0 10 rnd case
+		0 of chair endof
+		1 of chair endof
+		2 of lazyboy endof
+		3 of bed endof
+		4 of endtable endof
+		5 of smalltable endof
+		6 of table endof
+		7 of spawn 0x 1a themed spriteid! bbox endof
+		8 of spawn 0x 1d themed spriteid! bbox endof
+		9 of spawn 0x 1c themed spriteid! bbox endof
+		10 of chair endof
+	endcase	99 health!
+;
+
+} }			
+
+location
+		tags: furnstore
+		max-rooms: 2
+		entry-tags: furnstore
+		script: set-theme-furnstore
+
+		room-choice: furnstore
+			room-weight: 10
+			room-count: 1
+			room-script: 
+			room-post-script: 10diff %zombs shelfstock
+			filter-only		
+
+		room-choice: restroom
+			room-weight: 10
+			room-count: 1
+			room-script: floor-bath
+	
+			
+map{ roomgen{
+
+: randombookmag
+	20 %chance if
+		book 5 9
+	else
+		magazine 0 4
+	then rnd cyoa{ to bookmagtype ' bookmag-get cyoa! }
+;
+} }
+	
+location
+		tags: bookshop
+		max-rooms: 2
+		entry-tags: shop
+		script: set-theme-bookstore
+
+: bookshoploot
+	map{ room-papers }
+	6 for book scatter next
+	6 for magazine scatter next
+	randombookmag scatter
+;
+		
+		room-choice: shop
+			room-weight: 10
+			room-count: 1
+			room-script: 
+			room-post-script: 10diff %zombs bookshoploot
+			filter-only		
+
+		room-choice: restroom
+			room-weight: 10
+			room-count: 1
+			room-script: floor-bath
+			
+

@@ -1,0 +1,1693 @@
+
+:map 1 
+:tags randcabin  
+:scriptA bed 
+:scriptB drawers 
+:scriptC skelscat 
+:scriptD box 
+:scriptE smallshelf 
+:scriptF kitchencentral 
+:size 14 9 
+:off 7 2 
+:tiles 
+22222222222222
+23333333333332
+21111111111112
+21111C11111E12
+2111F1111A1112
+211111111B1D12
+21111111111112
+22222222222222
+33333333333333
+
+:map 2 
+:tags randcabin  
+:scriptA bed 
+:scriptB rndhshelf 
+:scriptC kfridge 
+:scriptD kloot 
+:scriptE kcounter 
+:scriptF smalltable 
+:scriptG chair 
+:size 16 10 
+:off 7 1 
+:tiles 
+2222222222222222
+2333333333333332
+2111111111111112
+211D1D1111BBB112
+21111111G1111112
+21111111111A1112
+21111111F1111112
+2111E11111111112
+2222222222222222
+3333333333333333
+
+:map 3 
+:tags randcabin  
+:scriptA bed 
+:scriptB chair 
+:scriptC kfridge 
+:scriptD endtable 
+:scriptE table-hori 
+:scriptF lazyboy 
+:scriptG rndshelf 
+:scriptH couch 
+:size 17 13 
+:off 4 0 
+:tiles 
+00000004000000000
+22222220000000000
+23333320000000000
+21G1G120000000000
+21111122222222222
+211A1133333333332
+2111111D1H111C112
+21111111111111112
+211F11B1E1B111112
+21111111111111112
+21111111111111112
+22222222222222222
+33333333333333333
+
+:map 4 
+:tags randcabin  
+:scriptA bed 
+:scriptB diningset 
+:scriptC kfridge 
+:scriptD kloot 
+:scriptE kstove 
+:scriptF kitchensink 
+:scriptG bigshelf 
+:scriptH skel 
+:size 22 13 
+:off 4 0 
+:tiles 
+0000000000000000400000
+0000000000000002222220
+0000000000000002333322
+0000000000000002F1E132
+2222222222222222111112
+2333332333333332111112
+2111H1211111G1G2C1D112
+2111112111111113111112
+211A11311B111111111112
+2111111111111112222222
+2111111111111112333333
+2222222222222222000000
+3333333333333333000000
+
+:map 5 
+:tags bearcabin  
+:scriptA bed 
+:scriptB drawers 
+:scriptC skel 
+:scriptD cabin1-bear 
+:scriptE smallshelf 
+:scriptF kstove 
+:size 13 9 
+:off 7 2 
+:tiles 
+2222222222222
+2333333333332
+21F1E1D1A1B12
+2111111111112
+21111C11C1112
+2111111111112
+2111111111112
+2222222222222
+3333333333333
+
+:map 6 
+:tags yallmart  
+:scriptA checkout 
+:scriptB 5 8 rnd carts-here 
+:scriptC 4 7 rnd carts-scatter 
+:size 27 20 
+:off 0 0 
+:tiles 
+222222222222222222222222222
+255555335555535555533555552
+255555115555515555511555552
+211111111111111111111111112
+251515115555515555511515152
+251515115555515555511515152
+251515111111111111111515152
+251515115555515555511515152
+251111115555515555511111152
+251515111111111111111515152
+251515115555515555511515152
+251515115555515555511515152
+251515111111111111111515152
+211111111111111111111111112
+211111111111151111222222222
+21A11A11A11A151111333333332
+21111111111115D111111B11C12
+211111111111111111111111112
+222222222222222222222222222
+333333333333333333333333333
+
+:map 7 
+:tags bar  
+:scriptA 80 %chance if barstool then 
+:scriptB barcounter 
+:scriptC bottle-scatter 
+:size 10 10 
+:off 8 1 
+:tiles 
+2222222222
+2333333332
+2111111112
+211B11B112
+21AAAAAA12
+2111111112
+2111111112
+2111111112
+2222222222
+3333333333
+
+:map 8 
+:tags shop  
+:scriptA checkout 
+:size 17 14 
+:off 3 1 
+:tiles 
+22222222222222222
+23333333333333332
+21111111111111112
+21111111111155112
+21155551151155112
+21155551151111112
+21111111151111112
+2111111115111A112
+21155551151111112
+21155551151111112
+21111111111111112
+21111111111111112
+22222222222222222
+33333333333333333
+
+:map 9 
+:tags the policestart  
+:scriptB policebench 
+:scriptC policecounter 
+:scriptD flagstand 
+:scriptE phonestand 
+:scriptF wallflag 
+:scriptG wallbadge 
+:scriptH wallbulletin 
+:size 11 10 
+:off 8 1 
+:tiles 
+22222222222
+23333333332
+2G111F111H2
+21D11C11D12
+21111111112
+21111111112
+21B1B11E112
+21111111112
+22222222222
+33333333333
+
+:map 10 
+:tags copevidence  
+:scriptA evidenceloot 
+:scriptB policebench 
+:scriptC policecounter 
+:scriptD flagstand 
+:scriptE cellbars -0.3 movey 
+:scriptF wallflag 
+:scriptG wallbadge 
+:scriptH wallbulletin 
+:size 12 16 
+:off 7 0 
+:tiles 
+222222222222
+233333333332
+211G1111G112
+212222222212
+212333333212
+2121AHA11212
+212111111212
+212212212212
+2132133E3312
+211211111112
+2113C1111112
+211111111112
+211111B1B112
+211111111112
+222222222222
+333333333333
+
+:map 11 
+:tags policecells  
+:scriptA cellbars -0.3 movey 
+:scriptB cellbars48 -0.3 movey 
+:scriptC cellcombine -1 movey 
+:scriptD cellbed 
+:scriptE wallbadge 
+:scriptF flagstand -1 movey 
+:scriptG cellbath 
+:scriptH cellbench -1 movey 
+:size 21 11 
+:off 2 1 
+:tiles 
+222200000000000002222
+233222222222222222332
+2E12333333233233321E2
+21121H1H1C2CD21GD2112
+221211211221122112122
+32131B31B331B331B3123
+021F111111F111111F120
+021111111111111111120
+021111111111111111120
+022222222222222222220
+033333333333333333330
+
+:map 12 
+:tags copevidence  
+:scriptA evidenceloot 
+:scriptB policebench 
+:scriptC policecounter 
+:scriptD flagstand 
+:scriptE cellbars -0.3 movey 
+:scriptF wallflag 
+:scriptG wallbadge 
+:scriptH wallbulletin 
+:size 11 16 
+:off 7 0 
+:tiles 
+22222222222
+23333333332
+211F111F112
+21222222212
+21233333212
+212HAGAH212
+21211111212
+21212121212
+213E313E312
+21111111112
+21111C11112
+21111111112
+211B111B112
+21111111112
+22222222222
+33333333333
+
+:map 13 
+:tags restroom  
+:scriptA bathtoilet -1 movey 
+:scriptB restsink -1 movey 
+:scriptC stall -1 movey 
+:size 15 10 
+:off 5 0 
+:tiles 
+222222222222222
+233333333333332
+211111111111112
+212222222222212
+213333333333312
+211BBBCACACAC12
+211111111111112
+211111111111112
+222222222222222
+333333333333333
+
+:map 14 
+:tags restroom  
+:scriptA bathtoilet -1 movey 
+:scriptB restsink -1 movey 
+:scriptC stall -1 movey 
+:size 12 10 
+:off 6 0 
+:tiles 
+222222222222
+233332233332
+211112211112
+212222222212
+213333333312
+211BBCACAC12
+211111111112
+211111111112
+222222222222
+333333333333
+
+:map 15 
+:tags office  
+:scriptA watercooler -1 movey 
+:scriptB officechair 
+:scriptC officedesk 
+:scriptD tackboard 
+:size 10 12 
+:off 8 0 
+:tiles 
+0002222000
+2222332222
+2333113332
+21DA11AD12
+2111111112
+2111111112
+211C11C112
+211C11C112
+211B11B112
+2111111112
+2222222222
+3333333333
+
+:map 16 
+:tags office  
+:scriptA watercooler -1 movey 
+:scriptB officechair 
+:scriptC officedesk 
+:scriptD tackboard 
+:size 11 12 
+:off 7 1 
+:tiles 
+22222222222
+23333333332
+21D11111D12
+21111111112
+211C1C1C112
+211B1B1B112
+21111111112
+211C1C1C112
+211B1B1B112
+21111111112
+22222222222
+33333333333
+
+:map 17 
+:tags office  
+:scriptA watercooler -1 movey 
+:scriptB officechair 
+:scriptC officedesk 
+:scriptD tackboard 
+:size 11 12 
+:off 7 1 
+:tiles 
+22222222222
+23333333332
+21111111112
+21222222212
+21232323212
+213D3A3D312
+21111111112
+211C1C1C112
+211B1B1B112
+21111111112
+22222222222
+33333333333
+
+:map 18 
+:tags office  
+:scriptA watercooler -1 movey 
+:scriptB officechair 
+:scriptC officedesk 
+:scriptD tackboard 
+:size 13 13 
+:off 6 1 
+:tiles 
+2222222222222
+2333333333332
+2111D111D1112
+2111122211112
+211C12321C112
+211B13A31B112
+2111111111112
+2111111111112
+2111C1C1C1112
+2111B1B1B1112
+2111111111112
+2222222222222
+3333333333333
+
+:map 19 
+:tags office  
+:scriptA watercooler -1 movey 
+:scriptB officechair 
+:scriptC officedesk 
+:scriptD tackboard 
+:scriptE wallbulletin 
+:size 15 12 
+:off 5 0 
+:tiles 
+222222222222222
+233333333333332
+2111D11E11D1112
+211111111111112
+211C1C1C1C1C112
+21111B1B1B11112
+211111111111112
+211C1C1C1C1C112
+21111B1B1B11112
+211111111111112
+222222222222222
+333333333333333
+
+:map 20 
+:tags office  
+:scriptA watercooler -1 movey 
+:scriptB officechair 
+:scriptC officedesk 
+:scriptD tackboard 
+:size 11 13 
+:off 7 0 
+:tiles 
+22222222222
+23333333332
+211DD1DD112
+21111B11112
+211C1C1CB12
+211CBC1C112
+21B1111B112
+2111BB11112
+211C1CBC112
+211CBC1C112
+21111111112
+22222222222
+33333333333
+
+:map 21 
+:tags clinicstart  
+:scriptA hospitalwall 
+:scriptB 30 %hospitalshelf 
+:scriptC hospitalcounter 
+:scriptD hospitalbed 
+:scriptE ivpole 
+:scriptF hospitalstool 
+:scriptG wheelchair 
+:scriptH hospitalthinger 
+:size 11 12 
+:off 9 1 
+:tiles 
+22222222222
+23333333332
+21111111112
+2111H1H1112
+21112221112
+21113331112
+21111A1F112
+211F1C11112
+21111111112
+21111111112
+22222222222
+33333333333
+
+:map 22 
+:tags clinichall  
+:scriptA hospitalwall 
+:scriptB wheelchair 
+:scriptC hospitalstepper 
+:scriptD stretcher 
+:size 8 11 
+:off 8 0 
+:tiles 
+22222222
+23333332
+21A11A12
+21111112
+211D1112
+21111C12
+21111112
+21B11112
+21111112
+22222222
+33333333
+
+:map 23 
+:tags clinicbed  
+:scriptA hospitalwall 
+:scriptB hospitalbed 
+:scriptC 40 %hospitalthing 
+:scriptD hospitalcurtain 
+:scriptE hospitalstepper 
+:scriptF hospitalstool 
+:size 9 9 
+:off 8 2 
+:tiles 
+222222222
+233333332
+21A111A12
+211111112
+211C1B112
+211111112
+211111112
+222222222
+333333333
+
+:map 24 
+:tags medstorage  
+:scriptA 40 %hospitalshelf 
+:scriptB wheelchair 
+:scriptC officedesk 
+:scriptD hospitalstool 
+:scriptE hospitalstepper 
+:scriptF hospitalwall 
+:scriptG hospitalthinger 
+:size 13 17 
+:off 8 0 
+:tiles 
+2222222222222
+2333333333332
+211F11111F112
+2122222222212
+2123333333212
+2121A1A1A1212
+2121111111212
+2131111111312
+2111111111112
+2121111111212
+212111C111212
+212G11D11G212
+2122222222212
+2133333333312
+211111F111112
+2222222222222
+3333333333333
+
+:map 25 
+:tags clinicbed  
+:scriptA hospitalwall 
+:scriptB hospitalbed 
+:scriptC 40 %hospitalthing 
+:scriptD hospitalcurtain 
+:scriptE hospitalstepper 
+:scriptF hospitalstool 
+:size 9 13 
+:off 8 2 
+:tiles 
+222222222
+233333332
+2111A1112
+211111112
+2111B1112
+211111112
+2111D1112
+211111112
+2111B1112
+211111112
+211111112
+222222222
+333333333
+
+:map 26 
+:tags clinicbed  
+:scriptA hospitalwall 
+:scriptB hospitalbedside 
+:scriptC 40 %hospitalthing 
+:scriptD hospitalcurtain 
+:scriptE hospitalstepper 
+:scriptF hospitalstool 
+:scriptG hospitalcurtainbig 
+:size 7 11 
+:off 9 2 
+:tiles 
+2222222
+2333332
+2A111A2
+2111112
+211B112
+211G112
+211B112
+2111112
+2111112
+2222222
+3333333
+
+:map 27 
+:tags medstorage  
+:scriptA 40 %hospitalshelf 
+:scriptB wheelchair 
+:scriptC officedesk 
+:scriptD hospitalstool 
+:scriptE hospitalstepper 
+:scriptF hospitalwall 
+:scriptG hospitalthinger -1 movey 
+:size 13 17 
+:off 8 0 
+:tiles 
+2222222222222
+2333333333332
+211F11111F112
+2122222222212
+2123333333212
+2121A1A1A1212
+2121111111212
+2121111111212
+2121111111212
+2121C111C1212
+2121D111D1212
+2122221222212
+2133331333312
+211GF111FG112
+2111111111112
+2222222222222
+3333333333333
+
+:map 28 
+:tags clinicexam  
+:scriptA hospitalwall 
+:scriptB hospitalexam 
+:scriptC 40 %hospitalthing 
+:scriptD hospitalcurtain 
+:scriptE hospitalstepper 
+:scriptF hospitalstool 
+:scriptG hospitalmachine 
+:size 7 11 
+:off 9 2 
+:tiles 
+2222222
+2333332
+21A1A12
+2111112
+211G112
+2111112
+211B112
+2111112
+2111112
+2222222
+3333333
+
+:map 29 
+:tags clinicexam  
+:scriptA hospitalwall 
+:scriptB hospitalexam 
+:scriptC 40 %hospitalthing 
+:scriptD hospitalcurtain 
+:scriptE hospitalstepper 
+:scriptF hospitalstool 
+:scriptG hospitalmachine 
+:size 9 11 
+:off 8 2 
+:tiles 
+222222222
+233333332
+21A111A12
+211111112
+2111D1112
+2111B1112
+211111112
+2111F1112
+211111112
+222222222
+333333333
+
+:map 30 
+:tags clinicexam  
+:scriptA hospitalwall 
+:scriptB hospitalexam 
+:scriptC 40 %hospitalthing 
+:scriptD hospitalcurtain 
+:scriptE hospitalstepper 
+:scriptF hospitalstool 
+:scriptG hospitalmachine 
+:size 11 9 
+:off 7 2 
+:tiles 
+22222222222
+23333333332
+21A11A11A12
+21111111112
+211C1B1C112
+21111111112
+21111111112
+22222222222
+33333333333
+
+:map 31 
+:tags policecells  
+:scriptA cellbars64 -0.3 movey 
+:scriptB cellbars48 -0.3 movey 
+:scriptC cellcombine -1 movey 
+:scriptD cellbed 
+:scriptE wallbadge 
+:scriptF wallflag 
+:scriptG cellbath 
+:scriptH cellbench -1 movey 
+:size 21 10 
+:off 2 1 
+:tiles 
+222200000000000002222
+233222222222222222332
+21F233233333332332F12
+2112DC21H1H1H12CD2112
+221211222111222112122
+32131B3331A13331B3123
+0211111E11111E1111120
+021111111111111111120
+022222222222222222220
+033333333333333333330
+
+:map 32 
+:tags policecells  
+:scriptA cellbars64 -0.3 movey 
+:scriptB cellbars48 -0.3 movey 
+:scriptC cellcombine -1 movey 
+:scriptD cellbed 
+:scriptE wallbadge 
+:scriptF wallflag 
+:scriptG cellbath 
+:scriptH cellbench -1 movey 
+:size 21 10 
+:off 2 1 
+:tiles 
+222200000000000002222
+233222222222222222332
+211233332333333332112
+2112D1GD2C1H1H1H12112
+221221122222111222122
+321331B333331A1333123
+02111111EFE11111E1120
+021111111111111111120
+022222222222222222220
+033333333333333333330
+
+:map 33 
+:tags restroom  
+:scriptA bathtoilet -1 movey 
+:scriptB restsink -1 movey 
+:scriptC stall -1 movey 
+:size 11 12 
+:off 7 0 
+:tiles 
+22220002222
+23320002332
+21122222112
+21133333112
+2111BBB1112
+21222222212
+21333333312
+21CACACAC12
+21111111112
+21111111112
+22222222222
+33333333333
+
+:map 34 
+:tags copevidence  
+:scriptA evidenceloot 
+:scriptB policebench 
+:scriptC policecounter 
+:scriptD flagstand 
+:scriptE cellbars -0.3 movey 
+:scriptF wallflag 
+:scriptG wallbadge 
+:scriptH wallbulletin 
+:size 11 16 
+:off 7 0 
+:tiles 
+22222222222
+23333333332
+211H111H112
+21222222212
+21233333212
+2121AGA1212
+21211111212
+21212121212
+212E313E212
+212D111D212
+21222122212
+21333133312
+211B111B112
+21111111112
+22222222222
+33333333333
+
+:map 35 
+:tags medstorage  
+:scriptA 40 %hospitalshelf 
+:scriptB wheelchair 
+:scriptC officedesk 
+:scriptD hospitalstool 
+:scriptE hospitalstepper 
+:scriptF hospitalwall 
+:scriptG hospitalthinger 
+:size 13 16 
+:off 8 1 
+:tiles 
+2222222222222
+2333333333332
+211F11111F112
+2122222222212
+2123333333212
+2121A1A1A1212
+2121111111212
+2121111111212
+21211G1G11212
+2131111111312
+21111G1G11112
+2122222222212
+2133333333312
+21111F1F11112
+2222222222222
+3333333333333
+
+:map 36 
+:tags clinichall  
+:scriptA hospitalwall 
+:scriptB wheelchair 
+:scriptC hospitalstepper 
+:scriptD stretcher 
+:size 7 10 
+:off 8 0 
+:tiles 
+2222222
+2333332
+21A1A12
+2111112
+211C112
+2111112
+211C112
+2111112
+2222222
+3333333
+
+:map 37 
+:tags clinichall  
+:scriptA hospitalwall 
+:scriptB wheelchair 
+:scriptC hospitalstepper 
+:scriptD hospitalstool 
+:size 11 9 
+:off 8 0 
+:tiles 
+22222222222
+23333333332
+21A11A11A12
+21111D11112
+211B1C1B112
+21111D11112
+21111111112
+22222222222
+33333333333
+
+:map 38 
+:tags clinicstart  
+:scriptA hospitalwall 
+:scriptB 30 %hospitalshelf 
+:scriptC hospitalcounter 
+:scriptE 60 %hospitalthing 
+:scriptF hospitalstool 
+:size 11 13 
+:off 9 0 
+:tiles 
+22222222222
+23333333332
+21111111112
+21111111112
+211E1E1E112
+21122222112
+21133333112
+2111AFA1112
+21111C11112
+21111111112
+21111111112
+22222222222
+33333333333
+
+:map 39 
+:tags clinicstart  
+:scriptA hospitalwall 
+:scriptB 30 %hospitalshelf -1 movey 
+:scriptC hospitalcounter 
+:scriptD hospitalshelfempty 
+:scriptE 60 %hospitalthing 
+:scriptF hospitalstool 
+:size 11 15 
+:off 9 0 
+:tiles 
+22222222222
+23333333332
+21111A11112
+21222222212
+21233333212
+212E1B1E212
+21211111212
+21222122212
+21333133312
+211A1F1A112
+21111C11112
+21111111112
+21111111112
+22222222222
+33333333333
+
+:map 40 
+:tags the policestart  
+:scriptB flagstand 
+:scriptC policecounter 
+:scriptD cellbars -0.3 movey 
+:scriptE phonestand -1 movey 
+:scriptF wallflag 
+:scriptG wallbadge 
+:scriptH wallbulletin 
+:size 11 12 
+:off 8 1 
+:tiles 
+22222222222
+23333333332
+2111HGH1112
+21111111112
+21222122212
+21333D33312
+211E111E112
+21111C11112
+21111111112
+21111111112
+22222222222
+33333333333
+
+:map 41 
+:tags the policestart  
+:scriptB policebench 
+:scriptC policecounter 
+:scriptD flagstand 
+:scriptE phonestand 
+:scriptF wallflag 
+:scriptG wallbadge 
+:scriptH wallbulletin 
+:size 12 11 
+:off 8 1 
+:tiles 
+222222222222
+233333333332
+211G111G1H12
+21111C111112
+211D111EE112
+211111111112
+211111111112
+2111B1B1B112
+211111111112
+222222222222
+333333333333
+
+:map 42 
+:tags officstart  
+:scriptA tackboard 
+:scriptB watercooler -1 movey 
+:scriptC officecounter 
+:scriptD officechair 
+:size 11 11 
+:off 9 1 
+:tiles 
+22222222222
+23333333332
+21111111112
+21122222212
+21123333212
+2113ADAB212
+21111C11312
+21111111112
+21111111112
+22222222222
+33333333333
+
+:map 43 
+:tags officstart  
+:scriptA tackboard 
+:scriptB watercooler -1 movey 
+:scriptC officecounter 
+:scriptD officechair scatter 
+:size 11 11 
+:off 9 1 
+:tiles 
+22222022222
+23332023332
+21112221112
+21113331112
+21111A11112
+21111C1D112
+21111111112
+21111111112
+21111111112
+22222222222
+33333333333
+
+:map 44 
+:tags officstart  
+:scriptA tackboard 
+:scriptB watercooler -1 movey 
+:scriptC officecounter 
+:scriptD officechair 
+:size 10 11 
+:off 9 1 
+:tiles 
+2222222222
+2333333332
+211A11A112
+2111111112
+21111D1112
+21111C1112
+211B111112
+2111111112
+2111111112
+2222222222
+3333333333
+
+:map 45 
+:tags emplounge  
+:scriptA kfridge -1 movey 
+:scriptB tackboard 
+:scriptC kloot -1 movey 
+:scriptD table 
+:scriptE chair 
+:scriptF diningset 
+:scriptG watercooler 
+:size 9 12 
+:off 9 2 
+:tiles 
+222222222
+233333332
+2111BB112
+211222112
+211333112
+2111A1112
+211111112
+2111F1112
+211111112
+211111112
+222222222
+333333333
+
+:map 46 
+:tags emplounge  
+:scriptA kfridge -1 movey 
+:scriptB tackboard 
+:scriptC kloot -1 movey 
+:scriptD table 
+:scriptE chair 
+:scriptF diningset 
+:scriptG watercooler 
+:size 9 14 
+:off 9 2 
+:tiles 
+222222222
+233333332
+21B111112
+212222212
+213333312
+211A1C112
+211111112
+211111112
+2111F1112
+211111112
+211111112
+211111112
+222222222
+333333333
+
+:map 47 
+:tags emplounge  
+:scriptA kfridge -1 movey 
+:scriptB tackboard 
+:scriptC kloot -1 movey 
+:scriptD table 
+:scriptE chair 
+:scriptF diningset 
+:scriptG watercooler -1 movey 
+:size 11 13 
+:off 9 2 
+:tiles 
+22222222222
+23333333332
+21B11B11B12
+21222222212
+21332323312
+211C3G3A112
+21111111112
+211F111F112
+21111111112
+21111111112
+22221112222
+33322222333
+00033333000
+
+:map 48 
+:tags emplounge  
+:scriptA kfridge -1 movey 
+:scriptB tackboard 
+:scriptC kloot -1 movey 
+:scriptD table 
+:scriptE chair 
+:scriptF diningset 
+:scriptG watercooler -1 movey 
+:scriptH hockeytable 
+:size 11 14 
+:off 8 0 
+:tiles 
+22222222222
+23333333332
+21111111112
+21111111112
+21111111112
+21111F11112
+21222222212
+21332323312
+211B3G3A112
+21111111112
+211H111H112
+21111111112
+22222222222
+33333333333
+
+:map 49 
+:tags emplounge  
+:scriptA kfridge -1 movey 
+:scriptB tackboard 
+:scriptC kloot -1 movey 
+:scriptD table 
+:scriptE chair 
+:scriptF diningset 
+:scriptG watercooler -1 movey 
+:scriptH hockeytable 1 movey 
+:size 11 13 
+:off 8 0 
+:tiles 
+22222222222
+23333333332
+21111111112
+21111H11112
+21122222112
+21133333112
+2111BAB1112
+21111111112
+21111F11112
+21111111112
+21112221112
+22222322222
+33333033333
+
+:map 50 
+:tags execoffic  
+:scriptA execdesk 
+:scriptB chair 
+:size 9 11 
+:off 9 0 
+:tiles 
+222222222
+233333332
+211111112
+211111112
+2111B1112
+2111A1112
+211B1B112
+211111112
+211111112
+222222222
+333333333
+
+:map 51 
+:tags execoffic  
+:scriptA execdeskup 
+:scriptB chair 
+:scriptC llazypair 
+:size 9 14 
+:off 9 0 
+:tiles 
+022222220
+223333322
+231111132
+211111112
+211111112
+2111C1112
+211111112
+211111112
+2111A1112
+2111B1112
+211111112
+221111122
+322222223
+033333330
+
+:map 52 
+:tags execoffic  
+:scriptA execdesk 
+:scriptB chair 
+:scriptC lazyboy 
+:size 13 11 
+:off 7 0 
+:tiles 
+2222222222222
+2333333333332
+2111111111112
+2111111111112
+211111B111112
+211C11A11C112
+21111B1B11112
+2111111111112
+2111111111112
+2222222222222
+3333333333333
+
+:map 53 
+:tags gym-entry  
+:scriptA dumbrack 
+:scriptB gymbike 
+:scriptC treadmill 
+:scriptD gymcyoa 
+:scriptE barbell 
+:scriptF dumbbell 
+:size 13 17 
+:off 6 0 
+:tiles 
+2222222222222
+2333333333332
+2111111111112
+211A11D11A112
+2111111111112
+2111111111112
+211C11C11C112
+2111111111112
+211C11C11C112
+2111111111112
+2111111111112
+211A11111A112
+2111111111112
+2111111111112
+2111111111112
+2222222222222
+3333333333333
+
+:map 54 
+:tags gym-entry  
+:scriptA dumbrack 
+:scriptB gymbike 
+:scriptC treadmill 
+:scriptD gymcyoa 
+:scriptE barbell 
+:scriptF dumbbell 
+:size 12 21 
+:off 7 0 
+:tiles 
+222222222222
+233333333332
+211111111112
+211111111112
+21111D111112
+211111111112
+21111111C112
+211A11111112
+21111111C112
+211111111112
+211A1111C112
+211111111112
+21111111C112
+211A11111112
+21111111C112
+211111111112
+211A1111C112
+211111111112
+211111111112
+222222222222
+333333333333
+
+:map 55 
+:tags gym-entry  
+:scriptA dumbrack 
+:scriptB gymbike 
+:scriptC treadmill 
+:scriptD gymcyoa 
+:scriptE barbell 
+:scriptF dumbbell 
+:size 13 17 
+:off 6 0 
+:tiles 
+2222222222222
+2333333333332
+2111111111112
+211A11D11A112
+21F1111111112
+211FF111F1F12
+2111111111112
+2111111111112
+211C11E11C112
+2111111111112
+2111111111112
+211C11E11C112
+2111111111112
+2111111111112
+2111111111112
+2222222222222
+3333333333333
+
+:map 56 
+:tags arcade  
+:scriptA arcademachine 
+:scriptB arcade-on 
+:scriptC vending 
+:scriptD 2vend -1 movey 
+:scriptE smallarcade 
+:scriptF clawmachine -1 movey 
+:size 12 16 
+:off 7 0 
+:tiles 
+000004000000
+222222222222
+233333333332
+21F1DDDD1F12
+211111111112
+211111111112
+211A1B1A1A12
+211111111112
+21A1A1A1A112
+211111111112
+211A1A1A1A12
+211111111112
+211111111112
+211111111112
+222222222222
+333333333333
+
+:map 57 
+:tags arcade  
+:scriptA arcademachine 
+:scriptB arcade-on 
+:scriptC vending 
+:scriptD 3vend -1 movey 
+:scriptE smallarcade 
+:scriptF clawmachine 
+:size 12 16 
+:off 7 0 
+:tiles 
+000004000000
+222222222222
+233333333332
+211DDDDDD112
+211111111112
+2111AAAA1E12
+21F111111112
+2111AABAA112
+211111111112
+211AAAAAA112
+211111111112
+21E1AAAA1E12
+211111111112
+211111111112
+222222222222
+333333333333
+
+:map 58 
+:tags arcade  
+:scriptA arcademachine 
+:scriptB arcade-on 
+:scriptC vending 
+:scriptD 2vend -1 movey 
+:scriptE smallarcade 
+:scriptF clawmachine -1 movey 
+:size 11 19 
+:off 8 0 
+:tiles 
+00004000000
+22222222222
+23333333332
+21DDDDD1F12
+21111111112
+21111111112
+21A1A1A1A12
+21111111112
+21A1A1B1A12
+21111111112
+21A1A1A1A12
+21111111112
+21111111112
+211E1E1E112
+21111111112
+21111111112
+21111111112
+22222222222
+33333333333
+
+:map 59 
+:tags restaurant  
+:scriptA cashcounter 
+:scriptB diningset 
+:size 12 17 
+:off 8 0 
+:tiles 
+222222222222
+233333333332
+211111111112
+211111111112
+211111111112
+211B1111B112
+211111111112
+211111111112
+211B11111112
+211111111112
+211111111112
+21111111B112
+21A111111112
+211111111112
+211111111112
+222222222222
+333333333333
+
+:map 60 
+:tags restaurant  
+:scriptA cashcounter 
+:scriptB diningset 
+:size 15 16 
+:off 8 0 
+:tiles 
+222222222222222
+233333333333332
+211111111111112
+211111111111112
+211111111111112
+2111B11B11B1112
+211111111111112
+211111111111112
+211111111122222
+2111B1111123333
+21111111A120000
+211111111120000
+211111111120000
+211111111120000
+222222222220000
+333333333330000
+
+:map 61 
+:tags restaurant  
+:scriptA cashcounter 
+:scriptB diningset 
+:size 14 14 
+:off 7 0 
+:tiles 
+22222222222222
+23333333333332
+21111111111112
+21111111111112
+22111111111112
+321111B11B1112
+02111111111112
+021A1111111112
+221111B11B1112
+23111111111112
+21111111111112
+21111111111112
+22222222222222
+33333333333333
+
+:map 62 
+:tags rest-kitchen  
+:scriptA kstove -1 movey 
+:scriptB kloot 
+:scriptC kitchensink -1 movey 
+:size 15 7 
+:off 7 1 
+:tiles 
+222220000022222
+233322222223332
+211133333331112
+21111A1C1A11112
+211111111111112
+222222222222222
+333333333333333
+
+:map 63 
+:tags rest-kitchen  
+:scriptA kstove -1 movey 
+:scriptB kloot 
+:scriptC kitchensink -1 movey 
+:size 11 10 
+:off 9 1 
+:tiles 
+00000400000
+22222222222
+23333333332
+211A1C1A112
+21111111112
+21111111112
+21111111112
+21111111112
+22222222222
+33333333333
+
+:map 64 
+:tags rest-kitchen  
+:scriptA kstove -1 movey 
+:scriptB kloot 
+:scriptC kitchensink -1 movey 
+:size 11 10 
+:off 9 1 
+:tiles 
+22222222222
+23333333332
+21111111112
+21222222212
+21333333312
+211A1C1A112
+21111111112
+21111111112
+22222222222
+33333333333
+
+:map 65 
+:tags rest-storage  
+:scriptA kloot 
+:scriptB gasfridge 
+:size 13 9 
+:off 9 1 
+:tiles 
+2222000002222
+2332222222332
+2113333333112
+2111B1B1B1112
+2111111111112
+2111A111A1112
+2111111111112
+2222222222222
+3333333333333
+
+:map 66 
+:tags rest-storage  
+:scriptA kfridge 
+:scriptB kloot 
+:scriptC shelfstock 
+:size 11 10 
+:off 10 0 
+:tiles 
+22222222222
+23333333332
+21111111112
+21555C55512
+21555155512
+21111111112
+211A111A112
+21111111112
+22222222222
+33333333333
+
+:map 67 
+:tags rest-storage  
+:scriptA kfridge -0.5 movey 
+:scriptB kloot 
+:scriptC shelfstock 
+:size 11 11 
+:off 10 0 
+:tiles 
+22222222222
+23333333332
+21111111112
+21151115112
+2115AAA5112
+21111111112
+21155155112
+21155155112
+21111C11112
+22222222222
+33333333333
+
+:map 68 
+:tags coffee  
+:scriptA cashcounter 
+:scriptB diningset 
+:scriptC coffeemachine 
+:size 14 17 
+:off 7 0 
+:tiles 
+00000000004000
+00000000222220
+00000000233320
+2222222221C120
+23333333311120
+21111111111120
+21111111111120
+21111111A11120
+2111B111122222
+21111111133332
+21111111111112
+21111111111112
+2111B1111B1112
+21111111111112
+21111111111112
+22222222222222
+33333333333333
+
+:map 69 
+:tags furnstore  
+:scriptA storefurniture 
+:scriptB checkout 
+:size 23 13 
+:off 3 0 
+:tiles 
+22222222222222222222222
+23333333333333333333332
+21111111111111111111112
+21111111111111111155512
+211A11A11A11A11A1155512
+21111111111111111111112
+211A11A11A11A11A1111112
+2111111111111111111B112
+211A11A11A11A11A1111112
+21111111111111111111112
+21111111111111111111112
+22222222222222222222222
+33333333333333333333333
+
+:map 70 
+:tags shop  
+:scriptA checkout 
+:size 18 14 
+:off 2 1 
+:tiles 
+222222222222222222
+233333333333333332
+211111111111111112
+211555555115115112
+211555555115115112
+211111111115115112
+211111111115115112
+211111111115115112
+2111A11A1115115112
+211111111115115112
+211111111111111112
+211111111111111112
+222222222222222222
+333333333333333333
+
+:map 71 
+:tags shop  
+:scriptA checkout 
+:size 19 18 
+:off 3 0 
+:tiles 
+2222222222222222222
+2333333333333333332
+2111111111111111112
+2111111111111111112
+2115115115115115112
+2115115115115115112
+2111115115115111112
+2115115115115115112
+2115115115115115112
+2111111111111111112
+2111111111111111112
+2111151115111511112
+211A151A151A151A112
+2111151115111511112
+2111111111111111112
+2111111111111111112
+2222222222222222222
+3333333333333333333

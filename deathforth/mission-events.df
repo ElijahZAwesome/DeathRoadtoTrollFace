@@ -1,0 +1,258 @@
+
+
+0 value preload-region
+
+mission{
+
+: end-mission mission-summary-cyoa ;
+
+: walk-try-end-mission
+	absentees dup not if 2drop end-mission exit then
+
+	cyoa-start
+		"OH NO!" cyoa-title!
+
+		1 > if " are" else " is" then
+		" not here, and will be left behind." $cat $cat
+		cyoa-text!
+
+	cyoa-add-choice
+		"Stay and find them." cyoa-choice-text!
+
+	cyoa-add-choice
+		"Just GO!" cyoa-choice-text!
+		' end-mission cyoa-choice-handler!
+;
+
+1 value outside-top-leave
+1 value outside-bottom-leave
+1 value outside-right-leave
+1 value outside-left-leave
+
+: outside-edge-leave! ( set edge ) 0 ( for room 0, outside ) room_edge_leave! ;
+: outside-edge-leave@ ( edge ) 0 room_edge_leave@ ;
+
+: mission-top-leave! 		dup >bool EDGE_TOP 		outside-edge-leave! to outside-top-leave ;
+: mission-bottom-leave!		dup >bool EDGE_BOTTOM	outside-edge-leave! to outside-bottom-leave ;
+: mission-right-leave! 		dup >bool EDGE_RIGHT 	outside-edge-leave! to outside-right-leave ;
+: mission-left-leave! 		dup >bool EDGE_LEFT 	outside-edge-leave! to outside-left-leave ;
+
+: mission-top-leave? 		EDGE_TOP 	outside-edge-leave@ ;
+: mission-bottom-leave?		EDGE_BOTTOM	outside-edge-leave@ ;
+: mission-right-leave? 		EDGE_RIGHT 	outside-edge-leave@ ;
+: mission-left-leave? 		EDGE_LEFT 	outside-edge-leave@ ;
+
+: no-leaving
+	0 mission-right-leave!
+	0 mission-left-leave!
+	0 mission-top-leave!
+	0 mission-bottom-leave!
+;
+
+: all-leaving
+	1 mission-bottom-leave!
+	1 mission-top-leave!
+	1 mission-left-leave!
+	1 mission-right-leave!
+;
+
+all-leaving
+
+: right-leaving
+	no-leaving
+	1 mission-right-leave!
+;
+
+// Return the "flag" so we can put a CYOA in there and use that instead if we want
+: edge-leave-check map{
+	mission-bottom-leave? if
+		player .pos.y@ pixelh 16 - > if mission-bottom-leave? then;
+	then
+
+	mission-top-leave? if
+		player .pos.y@ 16 < if mission-top-leave? then;
+	then
+
+	mission-left-leave? if
+		player .pos.x@ 16 < if mission-left-leave? then;
+	then
+
+	mission-right-leave? if
+		player .pos.x@ pixelw 16 - > if mission-right-leave? then;	
+	then
+
+	0
+} ;
+
+: walk-lose-car-end-mission
+	walk-try-end-mission
+	0 vehicle.which! // Put here so the car is gone by the time it goes to this screen
+	road{ ' car-lost stack-road-action }
+;
+
+: cyoa-reach-edge edge-leave-check args( edge )
+	<- edge not if exit then
+
+	// execute the edge flag if it's a word reference
+	<- edge wordref? if <- edge execute then;
+
+	cyoa-start
+	"LEAVING" cyoa-title!
+	"Do you want to walk back to the road?"
+	mv@ 0 > if
+		cr$ .. cr$ .. RED .. "You will abandon your car " .. WHITE .. "if you " .. RAINBOW .. "waltz off" .. WHITE .. " without it!" ..
+	then cyoa-text!
+	
+	cyoa-add-choice
+		"No, stay here." cyoa-choice-text!
+
+	cyoa-add-choice
+		"Yes, let's hit the road." cyoa-choice-text!
+		mv@ 0 = if
+			' walk-try-end-mission cyoa-choice-handler!
+		else
+			' walk-lose-car-end-mission cyoa-choice-handler!
+		then
+;
+
+last to main-event-mission-edge
+
+: door-no-escape
+	cyoa-start
+	beep "door-no-escape" print
+	"NO ESCAPE" cyoa-title!
+	"You can't leave from this location. You will have to find another way out." cyoa-text!
+;
+
+: door-sieged
+	cyoa-start
+	beep "door-sieged" print
+	"NO ESCAPE" cyoa-title!
+	"It's too dangerous outside right now. You can't leave from this location yet." cyoa-text!
+;
+
+
+// Leave an internal location with no_outside
+: cyoa-leave-location
+	cyoa-start
+	"LEAVING" cyoa-title!
+	"Do you want to leave this location?" cyoa-text!
+
+	cyoa-add-choice
+		"No, stay here." cyoa-choice-text!
+
+	cyoa-add-choice
+		"Yes, let's go." cyoa-choice-text!
+		' walk-try-end-mission cyoa-choice-handler!
+;
+
+last to main-event-mission-location-leave
+
+: set-leader .s cr cyoa-chosen-charid #character "Setting leader to " type dup . cr .make-leader ;
+
+: cyoa-pick-leader
+	cyoa-start
+	"OH, NO" cyoa-title!
+	"Your mission leader has died! Pick a new leader:" cyoa-text!
+	' set-leader cyoa-mission-team-choice
+;
+
+
+: car-fail2
+	// TODO: summary stuff
+
+
+	
+	(* THIS WAS REALLY SCREWY and broke if you were in a building in a city, presumably because driveout would happen but you weren't around to see the car drive out
+	getcar thecar if
+		vehicle.which@ if driveout beep "cyoa-car-fail2 at driveout" print then; // Car
+	then *)
+	
+	main-event-mission-end // No car
+;
+
+: cyoa-car-fail
+	cyoa-start
+	"FAILED!" cyoa-title!
+	"cyoa-car-fail" print
+	"Your scavenging team was wiped out! Better get out of here!"
+		cyoa-text!
+	' car-fail2 cyoa-choice-handler!
+;
+
+
+: cyoa-pick-last
+	cyoa-start
+
+	dup character# cyoa-char-icon!
+
+	"OH, NO" cyoa-title!
+	"Everyone else is dead! " over .name@ $cat " is all alone..." $cat cyoa-text!
+
+	.make-leader
+;
+
+
+: mission-killed
+	// Don't switch unless it's the player who died
+	player .character@ .dead? 0= if exit then
+
+	TEAM_STATUS_DIED player .character@ .decruit
+
+	// One left
+	mission-team-stack depths 1 = if
+		pops cyoa-pick-last exit else drop then
+
+	// More than one left
+	mission-team-stack depths nip if cyoa-pick-leader then;
+
+	// Only reserve team remains
+	team-stack-living depths nip if cyoa-car-fail then;
+
+	delete-the-game game-over
+;
+
+
+last to main-event-mission-killed
+
+: quit-from-mission
+	quit-to-title
+	delete-the-game
+;
+
+: road? game.location LOCATION_ROAD = ;
+: mission? game.location LOCATION_MISSION = ;
+
+: handle-esc cyoa{
+	cyoa-active? if then;
+	4 500 tone
+	cyoa-new- 
+	"QUIT?" cyoa-title!
+
+	game.location 0 < if
+		"EXIT the game?" cyoa-text!
+		choice( "NO" )choice
+		choice( "YES" )choice: mad_quit
+	then;
+
+	"ABORT the game and quit to the title screen?" cyoa-text!
+	choice( "NO" )choice
+	road? if
+		"You can resume the game later with CONTINUE GAME!" +crtext
+		choice( "YES" )choice: quit-to-title
+	then;
+	mission? if 
+		"WARNING: Quitting directly from a mission will delete the save!" rbold +crtext
+		choice( "QUIT AND DELETE SAVE" )choice: quit-from-mission
+	then;
+	choice( "SURE" )choice: quit-from-mission
+
+} ;
+
+last to main-event-do-esc
+
+}
+
+
+: quitmission mission{ ' to-road cyoa-choice-handler! } ;
+

@@ -1,0 +1,105 @@
+locations-start
+
+locations-reset
+
+location
+		tags: cabin-E
+		max-rooms: 2
+		entry-tags: cabin
+		
+		: set-theme-cabin
+
+			floor-wood
+			wall-wood
+			0 4 rnd loc-dtheme!
+			0 5 rnd to theme-num 
+
+		;
+		
+		script: set-theme-cabin
+		pre-script: set-theme-cabin
+		post-script: 6 %zombs
+
+		room-choice: randcabin
+			room-weight: 80
+			room-count: 1
+			room-script: ndx
+			room-post-script: looseloot
+			
+		room-choice: bathroom
+			room-weight: 1
+			room-count: 1
+			room-script: nad
+			
+location
+		tags: cabin-hermit
+		max-rooms: 2
+		entry-tags: entry
+		script: set-theme-cabin 
+		pre-script: set-theme-cabin
+		post-script: 0 %zombs
+
+		room-choice: entry
+			room-script: ndx 
+			room-post-script: 
+			room-weight: 1
+			room-count: 1
+			filter-only
+		
+		room-choice: randcabin
+			room-weight: 80
+			room-count: 1
+			room-script: nad
+			room-post-script: hermit looseloot
+			
+location
+		tags: cabin-bear
+		max-rooms: 1
+		entry-tags: bearcabin
+		script: set-theme-cabin 
+		pre-script: set-theme-cabin
+		post-script: 5 %zombs
+		
+		room-choice: bearcabin
+			room-weight: 80
+			room-count: 1
+			room-script: ndx
+			room-post-script: nicercommon-gun
+			filter-only
+
+location
+		tags: yallmart
+		max-rooms: 4
+		entry-tags: yallmart
+
+	: yall-theme floor-mart wall-mart door-mart ;
+	: carts-scatter for shoppingcart scatter next ;
+	: carts-here for shoppingcart drift next ;
+		
+		script: yall-theme 
+
+		post-script: 10diff %zombs
+
+// TODO: m/f bathrooms, garden center, employee break room, storage room?
+
+		room-choice: yallmart
+			room-weight: 10
+			room-count: 4
+			room-script: ndx
+			room-post-script: LLkitchen LLkitchen LLkitchen LLmisc
+			filter-only
+
+		room-choice: restroom
+			room-weight: 1
+			room-count: 2
+			room-script: nad floor-bath		
+
+		room-choice: storage
+			room-script: nad
+			room-weight: 1
+			room-count: 1
+			room-post-script: LLkitchen	LLkitchen LLkitchen		
+
+			
+locations-end
+

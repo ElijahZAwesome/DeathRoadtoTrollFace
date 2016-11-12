@@ -1,0 +1,89 @@
+
+// NOTE: This is an all-in-one yall mart config file, just load and go
+
+// Y'all Mart rooms
+"../deathforth/paul/testrooms.txt" $load-rooms
+
+locations-start
+
+	: yall-theme floor-mart wall-mart door-mart ;
+	: carts-scatter for shoppingcart scatter next ;
+	: carts-here for shoppingcart drift next ;
+
+location
+		tags: yallmart
+		max-rooms: 4
+		entry-tags: yallmart
+
+		script: yall-theme 
+
+//		post-script: 6 %zombs
+
+// TODO: m/f bathrooms, garden center, employee break room, storage room?
+
+		room-choice: yallmart
+			room-weight: 10
+			room-count: 4
+			room-script: ndx
+			filter-only
+
+locations-end
+
+
+regiondef{
+
+	 region: yallmart
+		w: 26
+		h: 30
+		script: 8 o'clock
+
+		no-prefab
+
+		: yallmart-margin 
+			map{
+				lt .pos.y@ pixelh 100 - > if 100 -32 32 rnd + lt .pos.y! then
+				lt .pos.y@ pixelh 0.5 * < if pixelh 0.5 * 0 32 rnd + lt .pos.y! then
+			}
+		;
+
+		: plotcurb locals( t x y ) map{
+			2dup -> y -> x tile@ -> t
+			// Space in the curb for "walking" (just cosmetic)
+			<- x w 2 / 3 - = if exit then
+			<- x w 2 / 2 - = if exit then
+			<- x w 2 / 1 + = if exit then
+			<- x w 2 / 2 + = if exit then
+			<- t LAYER_FLOORTOP street_tiles_base_id 0x 29 +
+				<- x 1 & +
+				.lspriteid!
+			}
+		;
+
+		: yallcurb map{ 0 12 w 1 ' plotcurb boxcall } ;
+
+		: yallrand map{
+			50 pixelw 50 - rnd
+			pixelh 0.5 * pixelh 100 - rnd
+			lt .pos! drift 
+			}
+		;
+
+		: setup-yallmart
+			map{
+			pavement street-junk 
+
+			yallcurb
+
+			"yallmart" $picklocid addloc
+			prefab{ 6 5 yallmart }
+
+			3 6 rnd for carwreck yallrand yallmart-margin next 
+			8 12 rnd for shoppingcart yallrand next
+
+			3 region.zombie_aggro!
+			
+			}
+		;
+
+		post-script: setup-yallmart 5 %zombs
+}

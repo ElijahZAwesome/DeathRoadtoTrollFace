@@ -1,0 +1,75 @@
+cyoa{
+
+cyoa-choice: cabin1-hermitchat-recruit
+	ricon
+	($ "Of course I'm not going to join you! I was doing fine before you brought the horde with you!" pbold .. "
+	The hermit isn't swayed by " .. pname .. "'s charms." $) cyoa-text! badfx
+;
+
+cyoa-choice: cabin1-hermitchat-coolit
+	ricon
+	cool-it++
+	cool-it-7 if
+		($ "The hermit cools it immediately, and welcomes you with open arms. He shares is secret stash of shotgun shells with you!
+		" .. pname .. " was really surprised and happy that this worked!" $) cyoa-text!
+		pchar .morale2+ goodfx cooled-it 20 LOOT_SHOTGUN_SHELL addloot
+	else
+		($ "The hermit does not cool it. Instead, he lets loose a tirade of swears.
+		" .. pname .. "'s sensibilities are offended!" $) cyoa-text!
+		pchar .morale-- badfx
+	then
+;
+
+cyoa: cabin1-hermitchat
+	char-gen to recruitee ricon
+	"Hermit" recruitee .name!
+	2 recruitee .specialtype!
+	"The Angriest Hermit" cyoa-title!
+	($ "The hermit is already infuriated." .. "
+	YOU BROUGHT ALL THESE ZOMBIES, DIDN'T YOU?
+	GET OUT OF MY HOUSE!" pbold $) cyoa-text!
+		choice( "Ask him to join you" )choice: cabin1-hermitchat-recruit
+		choice( "Tell Hermit to 'Cool it'" )choice: cabin1-hermitchat-coolit
+;
+: cabin1-hermitchat-start cabin1-hermitchat clear-cyoa ;
+
+cyoa-choice: cyoa-bear-wrestle
+	($ cname .. " grapples with the stuffed bear.
+	It doesn't budge. " .. cHe .. " keeps wrestling with the bear, and somehow absorbs a little bit of its strength." $) cyoa-text! strength++
+;
+
+cyoa-choice: cyoa-bear-search
+	($ cname .. " searches the stuffed bear on a hunch.
+	Hey! There was a small package hidden in a flap behind it!" $) cyoa-text! 3 trunk-food+ 2 trunk-medical+
+;
+
+cyoa: cyoa-bear
+	"Stuffed Bear" cyoa-title!
+	"A huge stuffed bear looms in the cabin." cyoa-text!
+		pchar charchoice( " wrestles it" )choice: cyoa-bear-wrestle
+		pchar charchoice( " searches the bear" )choice: cyoa-bear-search
+;
+
+: cyoa-bear-start cyoa-bear clear-cyoa ;
+}
+
+: cabin1-bear
+	spawn special_objects48_base_id 0 + lt .spriteid! immovable
+	lt .sprh 2 / 8 - lt .anim.off.y! 8 lt .rad.x!
+	cyoa{ ' cyoa-bear-start cyoa! }
+;
+
+: .hermitify
+	2 over .specialtype!
+	6 over .shooting!
+	WEAPON_SHOTGUN over .weapona!
+	WEAPON_FIRE over .weaponb!
+	60 LOOT_SHOTGUN_SHELL 2 pick .lootamt!
+	dup cyoa{ ' cabin1-hermitchat-start cyoa! }
+;
+
+
+: hermit
+	new-npc .hermitify
+;
+

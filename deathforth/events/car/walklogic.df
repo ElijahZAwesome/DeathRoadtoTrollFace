@@ -1,0 +1,52 @@
+
+road{
+
+	0 value walk-countdown
+	0 value walk-event-turn
+	0 value walk-trip-days
+	0 value walk-days-left
+
+}
+
+events{ road{
+	
+: test1-walk-day
+	1 to walk-countdown "TEST1 WALK" print
+;
+
+: test2-walk-day
+	2 to walk-countdown "TEST2 WALK" print
+;
+
+: test3-walk-day
+	3 to walk-countdown "TEST3 WALK" print
+;	
+
+: walk-day-chance
+	// 1 %chance if test1-walk-day	else
+		50 %chance if
+			test1-walk-day
+		else
+			test2-walk-day
+		then
+	// then
+;
+
+: walk-day-pick
+	walk-music
+	50 %chance if
+		test2-walk-day 1 "1 DAYS" print
+	else
+		test3-walk-day 0 "0 DAY" print
+	then to walk-days-left
+;
+
+: new-walk-day // Logic for what happens every new day
+	' walk-trip-days ++
+	' calendar-days ++
+	' walk-days-left --
+	walk-day-chance
+	
+;
+	
+} }

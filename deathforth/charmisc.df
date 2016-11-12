@@ -1,0 +1,540 @@
+// General character words for rescues and common action mode CYOA
+
+0 value rescue
+0 value safecombo
+
+: #c #character ;
+: c# character# ;
+
+: team-full? team-count TEAM_MAX >= ;
+
+: resetsafe 0 to safecombo ;
+
+: .thing@ .cur_thingid@ #thing ;
+
+: .liedown .thing@ args( self )
+	ANIM_ANGLE <- self .anim.state! 
+	-90 <- self .flipx * <- self .angle!
+;
+
+: .getup .thing@ args( self )
+	0 <- self .anim.state! 
+	0 <- self .angle!
+;
+
+: .wakeup dup .getup 0.25 over .ai.wander_chance! 1 over .ai.attack_chance! drop ;
+: rescueget 0.25 rescue .ai.wander_chance! 1 rescue .party! 0 nearest .unseen! clear-cyoa goodfx ;
+: nearestget 0.25 nearest .character@ .ai.wander_chance! 1 nearest .character@ .party! 0 nearest .unseen! clear-cyoa goodfx ;
+: ccharget 0.25 cchar .ai.wander_chance! 1 cchar .party! 0 nearest .unseen! clear-cyoa goodfx ;
+
+: ctakeweapons cchar .weapons-to-trunk ;
+
+: .char-droploot dup .thing@ args( chara thing )
+	LOOT_COUNT for
+		i 1- <- chara .lootamt@ if i 1- <- chara .lootamt@ i 1- spawnloot
+			<- thing lt-to-thing lt-droploot-vel lt-bulk-lootsprite
+		then
+		0 i 1- <- chara .lootamt!
+	next
+;
+
+: #new-npc #character args( chara )
+	<- chara character# spawn lt .charid!
+	lt .as-human
+	lt .id@ <- chara .cur_thingid!
+;
+
+: new-npc
+	char-gen character# #new-npc
+	0 lt .character@ .ai.flock_dist!
+;
+
+: new-npc@ new-npc lt .character@ ;
+
+: savechar-raw-list
+	0 stack CUSTOM_CHARS_MAX
+	for i 1+ // skip the #1 char since that's the currently edited one
+		slot>savechar# dup if shove else drop then
+	next
+;
+
+: chardupcheck args( char1 char2 )
+	<- char1 .seed@ <- char2 .seed@ =
+	<- char1 .name@ <- char2 .name@ $=
+	or
+;
+
+: savecharteamfilt #savechar-clone #character args( char1 )
+	team-count for
+		team-count i - #teamchar <- char1 chardupcheck
+		if <- char1 char-free 0 then; // Matches existing char, so don't keep.
+	next
+	<- char1 char-free 1
+;
+
+: savechars-filter-vs-team ' savecharteamfilt stack-filter ;
+: savechar#-list savechar-raw-list savechars-filter-vs-team drop ;
+
+
+// : .dead-drunk dup .liedown 0 over .ai.wander_chance! 0 over .ai.attack_chance! drop ;
+// 1 character party!
+// lt .character@ .alive?
+
+: .has-weapon? args( wid chara )
+	<- wid <- chara .weapona@ = if 1 then;
+	<- wid <- chara .weaponb@ = if 1 then;
+	<- wid <- chara .weaponc@ = if 1 then;
+	0
+;
+
+: team-has-weapon?
+	team-count for dup i 1- #teamchar .has-weapon? if drop 1 then; next
+	drop 0
+;
+
+: roadtrip-has-weapon? dup team-has-weapon? swap trunk.weapon@ or ;
+: check-weapontype team-has-weapon? | ;
+
+: team-has-weapontype?
+	0 swap ' check-weapontype foreach drop
+;
+
+: check-trunk-weapontype trunk.weapon@ 0= not | ;
+
+: trunk-has-weapontype?
+	0 swap ' check-trunk-weapontype foreach drop
+;
+
+: team-has-breakin? WEAPON_LIST_BREAKIN team-has-weapontype? ;
+
+: roadtrip-has-weapontype? dup team-has-weapontype? swap trunk-has-weapontype? or ;
+: roadtrip-has-firearm? WEAPON_LIST_FIREARM roadtrip-has-weapontype? ;
+
+: roadtrip-has-umbrella? WEAPON_LIST_UMBRELLA roadtrip-has-weapontype? ;
+
+: calmshot-check most-calmshot roadtrip-has-firearm? and ;
+: longshot-check most-calmshot WEAPON_LIST_RIFLE roadtrip-has-weapontype? and ;
+
+cyoa{
+
+0 value bookmagtype
+
+: bookmaggain
+	bookmagtype 4 > if
+		bookmagtype 5 - to bookmagtype
+	then
+	bookmagtype case
+		0 of dup .strength++ .strengthREV endof
+		1 of dup .fitness++ .fitnessREV endof
+		2 of dup .medical++ .medicalREV endof
+		3 of dup .mechanic++ .mechanicREV endof
+		4 of dup .shooting++ .shootingREV endof
+	endcase
+;
+
+: bookmagtitle
+	bookmagtype case
+		0 of "SWOLE" endof
+		1 of "COOL RUNNINGS" endof
+		2 of "MEDICINE TODAY" endof
+		3 of "CARS-N-GADGETS" endof
+		4 of "MODERN HUNTER" endof
+		
+		5 of "COMPLETE GUIDE TO LIFTING" endof
+		6 of "1001 EXERCISES ANYWHERE" endof
+		7 of "MORON'S GUIDE TO SURGERY" endof
+		8 of "THE HANDYMAN'S BIBLE" endof
+		9 of "THE SCIENCE OF SHOOTING" endof
+	endcase pbold
+;
+
+: bookormag
+	bookmagtype 4 > if "book" else "magazine" then
+;
+
+}
+
+: npc@rescue lt .character@ to rescue ;
+
+: rescue-weapon
+	0 stack
+		WEAPON_BASEBALL shove
+		WEAPON_CANE shove
+		WEAPON_HATCHET shove
+		WEAPON_SLEDGE shove
+		WEAPON_WRENCH shove
+		WEAPON_MACHETE1 shove
+		WEAPON_HOCKEY shove
+		WEAPON_GOLF shove
+		WEAPON_FRYING shove
+		WEAPON_METAL shove
+		WEAPON_CROWBAR shove
+		WEAPON_CLEAVER shove
+		WEAPON_CRICKET shove
+		WEAPON_UMBRELLA shove
+		WEAPON_KITCH shove
+	shuffles pops nip
+;
+
+: sports-weapon
+	0 stack
+		WEAPON_BASEBALL shove
+		WEAPON_HOCKEY shove
+		WEAPON_GOLF shove
+		WEAPON_CRICKET shove
+	shuffles pops nip
+;
+
+: crap-weapon
+	0 stack
+		WEAPON_CANE shove
+		WEAPON_FRYING shove
+		WEAPON_UMBRELLA shove
+		WEAPON_KITCH shove
+		WEAPON_REBAR shove
+		WEAPON_WOOD shove
+	shuffles pops nip
+;
+
+: new-veryferaldog map{ selected } . cr new-npc@ .doggify ;
+
+: .mountiefy
+	38 over .specialtype!
+	6 over .strength!
+	6 over .fitness!
+	4 over .vitality!
+	4 over .health!
+	0 over .female!
+	drop
+;
+
+: .alien
+	51 over .specialtype!
+	4 over .strength!
+	4 over .fitness!
+	1 over .female!
+	"Grey" over .name!
+	WEAPON_RAYGUN over .weapona!
+	skeletons_base_id 9 + over .skeleton_spriteid!
+	statmod{ dup .nocarry dup .notake dup .noswap }
+
+	// WEAPON_RAYGUN over .weapon_nodropa!
+	60 over LOOT_GAS swap .lootamt!
+
+	drop
+;
+
+: .gerbilfy
+	76 over .specialtype!
+	WEAPON_CLAW over .weapon_default!
+	6 over .fitness!
+	0 over .strength!
+	2 over .vitality!
+	2 over .health!
+	0.2 over .speed_bonus!
+	skeletons_base_id 11 + over .skeleton_spriteid!
+	"is a freakishly large, gnomeless rodent. I think it's some kind of... gerbil." over .job!
+	3 over .skincolour!
+	drop
+;
+
+: .beaverify ( chara )
+	dup .gerbilfy
+	77 over .specialtype!
+	3 over .skincolour!
+	drop
+;
+
+: .beaver? .specialtype@ 77 = ;
+
+: .moosify ( chara ) statmod{ 
+	3 over .pet!
+
+	skeletons_base_id 10 + over .skeleton_spriteid!
+
+	"MOOSE" over .name!
+
+	0.25 over .bounceval!
+	18 over .footoff.y!
+	4 over .footoff.x!
+	10 over .health!
+	WEAPON_ANTLERS over .weapon_default!
+	50 over .fitness!
+	-0.75 over .breathescale!
+	dup .nocarry 
+	dup .notake 
+	dup .noswap 
+//	MOD_MOO over .setmod 
+	drop
+} ;
+
+: .skelbody
+	78 over .specialbody!
+	1 over .vitality!
+	1 over .health!
+	"is now a HALF-HUMAN, HALF-SKELETON!" over .job!
+drop ;
+
+: .skelify 
+	78 over .specialtype!
+	WEAPON_CLAW over .weapon_default!
+	0 over .fitness!
+	0 over .strength!
+	0 over .mechanical!
+	0 over .medical!
+	0 over .shooting!
+	0 over .wits!
+	0 over .attitude!
+	1 over .morale!
+	1 over .vitality!
+	1 over .health!
+	"is now a spooky dancing skeleton, no doubt after some blunder." over .job!
+
+ drop ;
+
+: .mallcop1
+	69 over .specialtype!
+	4 over .strength!
+	0 over .female!
+	"Mall Cop" over .name!
+	WEAPON_NIGHTSTICK over .weapona!
+	WEAPON_NIGHTSTICK over .weapon_nodropa!
+	drop
+;
+
+: .mallcop2
+	70 over .specialtype!
+	4 over .shooting!
+	0 over .female!
+	"Mall Cop" over .name!
+	WEAPON_PISTOL over .weapona!
+	30 over LOOT_BULLET swap .lootamt!
+	statmod{ dup .nocarry dup .notake dup .noswap }
+	drop
+;
+
+
+// Turn char to hulk colour
+: .hulkclr args( chara )
+	0 <- chara .skincolour! // LILY WHITE BASE SKIN
+	12 <- chara .haircolour! // LILY WHITE BASE HAIR
+
+	0.0 <- chara .tint.skin.r!
+	0.8 <- chara .tint.skin.g!
+	0.25 <- chara .tint.skin.b!
+
+	0.5 <- chara .tint.hair.r!
+	0.0 <- chara .tint.hair.g!
+	1.0 <- chara .tint.hair.b!
+;
+
+// General char RGB words
+: .tint.hair! args( r g b chara )
+	<- r <- chara .tint.hair.r!
+	<- g <- chara .tint.hair.g!
+	<- b <- chara .tint.hair.b!
+;
+
+: .tint.hair@ args( chara )
+	<- chara .tint.hair.r@
+	<- chara .tint.hair.g@
+	<- chara .tint.hair.b@
+;
+
+: .tint.skin! args( r g b chara )
+	<- r <- chara .tint.skin.r!
+	<- g <- chara .tint.skin.g!
+	<- b <- chara .tint.skin.b!
+;
+
+: .tint.skin@ args( chara )
+	<- chara .tint.skin.r@
+	<- chara .tint.skin.g@
+	<- chara .tint.skin.b@
+;
+
+: .tint.body! args( r g b chara )
+	<- r <- chara .tint.body.r!
+	<- g <- chara .tint.body.g!
+	<- b <- chara .tint.body.b!
+;
+
+: .tint.skin@ args( chara )
+	<- chara .tint.body.r@
+	<- chara .tint.body.g@
+	<- chara .tint.body.b@
+;
+
+: .stoneclr args( chara )
+	0 <- chara .skincolour!
+	12 <- chara .haircolour!
+
+	0.5 0.5 0.5 <- chara .tint.skin!
+	0.5 0.5 0.5 <- chara .tint.hair!
+	0.5 0.5 0.5 <- chara .tint.body!
+;
+
+// Become a dogtaur
+: .dogtaur args( chara )
+	WEAPON_CLAW <- chara .weapon_default!
+	73 <- chara .specialbody!
+	0 <- chara .specialtype!
+	skeletons_base_id 2 + <- chara .skeleton_spriteid!
+
+	// Copy char's hair colour to body tint so that dogtaur body hair matches
+	<- chara .hair-rgb <- chara .tint.body!
+;
+
+// THE FLY
+: .flyhead args( chara )
+	74 <- chara .specialhead!
+	1 <- chara .voice.ex!
+	0.15 <- chara .voice.pitch!
+	1 <- chara .voice.k!
+	0.015 <- chara .voice.duty!
+	1 <- chara .voice.vol!
+	10000 <- chara .voice.flo!
+	1000 <- chara .voice.fhi! // Doesn't seem to do anything
+	0.98 <- chara .voice.q!
+;
+
+: .flybody args( chara )
+	WEAPON_CLAW <- chara .weapon_default!
+	1 1 1 <- chara .tint.body!
+	74 <- chara .specialbody!
+;
+
+: .fly args( chara )
+	WEAPON_CLAW <- chara .weapon_default!
+	1 1 1 <- chara .tint.body!
+	<- chara .specialhead@
+		<- chara .flyhead
+		74 <- chara .specialtype!
+	<- chara .specialhead!
+;
+
+: .punkinhead 80 swap .specialhead! ;
+
+: .witchify args( chara ) 81 <- chara .specialtype!
+	2 <- chara .headoff.y!
+	"Witch" <- chara .name!
+	WEAPON_CLAW <- chara .weapon_default!
+	WEAPON_WITCH <- chara .weapona!
+	WEAPON_WITCH <- chara .weapon_nodropa!
+	WEAPON_UZI <- chara .weaponb!
+	WEAPON_UZI <- chara .weapon_nodropb!
+	50 LOOT_BULLET <- chara .lootamt!
+	1 <- chara .female!
+	0 <- chara .loyalty!
+	5 <- chara .medical!
+	0 <- chara .attitude!
+	0 <- chara .composure!
+	// TODO: Wand?
+;
+
+
+// COUNT DINKULA
+// =============
+
+: .nofloat
+	0 over .floatval!
+	0 over .floatheight!
+	drop
+;
+
+
+defer dracbat
+defer batdrac
+
+: drac-thing-events args( me teid )
+	<- teid
+
+	THING_EVENT_TIMER ?(
+		<- me .character@ .specialtype@ 83 <> if then;
+		<- me .character@ batdrac
+		0 <- me .nocollide!
+		RED "BLAH!" .. <- me .yellmsglong
+	);
+
+	THING_EVENT_WAS_HIT ?(
+		<- me .character@ .specialtype@ 82 <> if then;
+		<- me .character@ dracbat
+		60 <- me .invincible_counter!
+		1 <- me .nocollide!
+		RED "NOW I AM IN A BAT MOOD!" .. <- me .yellmsglong
+		60 7 * <- me .timer! // 7 seconds, formerly 13
+
+		// TODO: Drop weapons & set slot count to 1?
+	);
+
+	drop
+;
+
+: drac-main-events ( teid ) args( chara eventid )
+
+	<- eventid MAIN_EVENT_MISSION_START = if <- chara batdrac then; // In case we're a bat
+	<- eventid MAIN_EVENT_DRIVING_START = if <- chara batdrac then; // In case we're a bat
+
+	<- eventid MAIN_EVENT_MISSION_CHARACTER_THING_EVENT <> if then;
+
+	<- chara .thing@ swap ( teid ) drac-thing-events
+;
+
+: .dracufy args( chara )
+	"Count Dinkula" <- chara .name!
+	"skulks around going BLAH for some reason." <- chara .job!
+	82 <- chara .specialtype!
+	WEAPON_CLAW <- chara .weapon_default!
+	<- chara .nofloat
+
+	6 <- chara .fitness!
+	0 <- chara .speed_bonus!
+	' drac-main-events <- chara .main_events!
+	skeletons_base_id 3 + <- chara .skeleton_spriteid!
+
+	<- chara .thing@ if
+		<- chara .thing@ .poofmescary
+		15 <- chara .thing@ .fade!
+	then
+;
+
+last to batdrac
+
+: .batify
+	83 over .specialtype!
+	12 over .floatval!
+	10 over .floatheight!
+	10 over .floattoggle!
+	skeletons_base_id 4 + over .skeleton_spriteid!
+
+	drop
+;
+
+: .dracubatify
+	dup .dracufy
+	dup .batify
+	1 over .speed_bonus!
+	drop
+;
+
+last to dracbat
+
+: .grimreaperify args( chara )
+	"Grim Reaper" <- chara .name!
+	84 <- chara .specialtype!
+	2 <- chara .floatval!
+	8 <- chara .floatheight!
+	180 <- chara .floattoggle!
+	WEAPON_REAPER <- chara .weapona!
+	10 <- chara .vitality!
+	10 <- chara .health!
+	10 <- chara .fitness!
+	100 STAT_FITNESS <- chara .bonus!
+	10 <- chara .strength!
+	100 STAT_STRENGTH <- chara .bonus!
+	<- chara .nocarry 
+	<- chara .notake 
+	<- chara .noswap 
+	<- chara .nopickups
+	0 <- chara .ai.loot_chance!
+;

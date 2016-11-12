@@ -1,0 +1,207 @@
+uses base.df
+uses charfilt.df
+uses charstats.df
+uses road.df
+
+cyoa{ road{
+
+
+cyoa: new-test
+	cyoa-start
+	"Test Town" cyoa-title!
+	someone choosechar cicon
+	($ Thegroup .. " enters Testing Town!
+	Currently testing out: Small Police Stations, clinics, gyms, more. Work in progress." $) cyoa-text! 3 500 tone
+		1 10 15 rnd 0 1 rnd zforecast
+	//	mission{ ' door-no-escape to main-event-mission-location-leave }
+		"test/loctestregion.df" $load-region
+		choice( "DIVE IN" )choice: premission
+;
+
+cyoa: knoobstartP2
+	soloer choosechar cicon
+	($ soloname .. " has " .. soloer .shooting@ .. " shooting skill!" $) cyoa-text!
+	shootingREV +cr
+//	100 trunk-rifle-shell+ 50 trunk-shotgun-shell+ 100 trunk-bullet+
+	8 LOOT_FOOD trunk.loot+
+	1 WEAPON_BAT trunk.weapon+
+//	1 WEAPON_FLAMETHROWER trunk.weapon+ 1 WEAPON_PISTOL trunk.weapon+ 1 WEAPON_SHOTGUN trunk.weapon+ 1 WEAPON_RIFLE trunk.weapon+	1 WEAPON_DOLT trunk.weapon+ 1 WEAPON_SNUBNOSE trunk.weapon+ 1 WEAPON_UZI trunk.weapon+ 1 WEAPON_AUTOSHOT trunk.weapon+ 1 WEAPON_DAWG trunk.weapon+ 1 WEAPON_SLUG trunk.weapon+ 1 WEAPON_HUNTING trunk.weapon+ 1 WEAPON_AK47 trunk.weapon+
+	choice( "HIT THE ROAD" )choice
+	choice( "Try Test Town" )choice: new-test
+;
+	
+: nshoot soloer .shooting! knoobstartP2 ;
+: 0shoot 0 nshoot ;
+: 3shoot 3 nshoot ;
+: 6shoot 6 nshoot ;
+
+: diffscale to diff-scalar diff-scalar 0.8 * to road-difficulty knoobstartP2 ;
+: 5diffscale 0.5 diffscale ;
+: 7diffscale 0.75 diffscale ;
+: 1diffscale 1 diffscale ;
+: 13diffscale 1.3 diffscale ;
+	
+cyoa: knoobstartP
+	"Death Road to Canada 2/05 Alpha" cyoa-title!
+	// choice( "HIT THE ROAD" )choice
+		soloer choosechar cicon
+
+	($ cname .. " hears rumors that Canada is a safe place, free of the threat of zombies.
+	With nothing to gain from waiting around Florida, " .. che .. " decides to brave the Death Road and travel north." $) cyoa-text!
+		50 %chance if
+		//	($ cname .. " is pretty strong." $) +crtext 
+			4 soloer .strength! strengthREV
+		else
+		//	($ cname .. " is physically fit." $) +crtext 
+			5 soloer .fitness! fitnessREV
+		then
+		4 soloer .morale!
+		($ soloname .. " has " .. soloer .shooting@ .. " shooting skill!" $) +crtext
+	shootingREV +cr
+		8 LOOT_FOOD trunk.loot+
+		1 WEAPON_BAT trunk.weapon+
+	
+		choice( "HIT THE ROAD" )choice
+		
+	(*	choice( "Same Difficulty as Last Build" )choice: 1diffscale
+		choice( "Half as Difficult" )choice: 5diffscale
+		choice( "75% as Difficult" )choice: 7diffscale
+		choice( "30% harder than Last Build" )choice: 13diffscale
+		
+		choice( "Give 3 Shooting Skill" )choice: 3shoot
+		choice( "Give 0 Shooting Skill" )choice: 0shoot
+		choice( "Give 6 Shooting Skill" )choice: 6shoot *)
+;
+
+// BEGIN temporary beta start message
+
+cyoa: knoobstartB
+	"The Death Road to Canada 8/26 Alpha" cyoa-title!
+	choice( "HIT THE ROAD" )choice
+		soloer choosechar cicon
+
+	($ "Welcome to the Death Road to Canada Alpha!
+	Currently Testing: Special Characters
+	You can find a full list of recent changes and instructions to help us test the game by clicking the NEWS link on the Death Road to Canada Steam page.
+	Send us feedback via Kickstarter messages!" $) cyoa-text!
+		8 LOOT_FOOD trunk.loot+ 1 WEAPON_BAT trunk.weapon+ 30 WEAPON_GRENADE trunk.weapon+ 30 WEAPON_PIPEBOMB trunk.weapon+ 1 WEAPON_FLAMETHROWER trunk.weapon+ 500 LOOT_GAS trunk.loot+
+;
+
+// END temporary beta start message
+
+cyoa-choice: kn1recruit 
+	recruitee character# cyoa-char-icon!
+	WEAPON_WRENCH recruitee .weapona!
+	($ rname .. " is now part of the team!
+	" .. cname .. " quietly groans a little bit about this.
+	Onward to Canada!" $) cyoa-text! 2 300 tone
+	morale-- recruitee .recruit
+;
+cyoa-choice: kn1nope 
+	($ cname .. " peels out of there. 
+	" .. "SEE YOU LATER SUCKER." pbold .. "
+	It seems like a good start." $) cyoa-text! morale2+ goodfx
+;
+
+cyoa: knoobevent1
+	"Powerful Allies" cyoa-title!
+	char-gen to recruitee
+	recruitee character# cyoa-char-icon!
+	soloer choosechar
+	choice( "Recruit " .. rname )choice: kn1recruit
+	cchar charchoice( " PEELS OUT" )choice: kn1nope
+
+	($ "As " .. cname .. " starts the journey to Canada, they meet their neighbor, " .. rname .. ". 
+	" .. cname .. " has always hated this person, but could use the help and/or decoy." $) cyoa-text! 3 500 tone
+;
+
+: 4food2med 4 LOOT_FOOD trunk.loot+ 2 LOOT_MEDICAL trunk.loot+ ;
+cyoa-choice: kn2-shotty
+	($ soloname .. " named this shotgun BIG DAWG. It is capable of exploding zombies, both near and far. For a novice, it's possibly the best choice of firearm.
+	" .. Thegroup .. " acquires " .. RED .. "BIG DAWG" .. WHITE .. "." $)
+	cyoa-text! goodfx 1 WEAPON_SHOTGUN trunk.weapon+ 8 LOOT_SHOTGUN_SHELL trunk.loot+ 4food2med
+;
+cyoa-choice: kn2-rifle
+	($ "Rifles are capable of puncturing through multiple zombie heads, in the hands of a great shooter! " .. soloname .. " isn't necessarily a great shot, but practice makes perfect.
+	" .. Thegroup .. " acquires the rifle!" $)
+	cyoa-text! goodfx 1 WEAPON_RIFLE trunk.weapon+ 12 LOOT_RIFLE_SHELL trunk.loot+ 4food2med
+;
+cyoa-choice: kn2-pistol
+	($ "The humble pistol may not have the power of bigger firearms, but it gets the job done. That, and pistol bullets are still rather plentiful. Open any drawer and some will likely spill out!
+	" .. Thegroup .. " acquires the pistol!" $)
+	cyoa-text! goodfx 1 WEAPON_PISTOL trunk.weapon+ 20 LOOT_BULLET trunk.loot+ 4food2med
+;
+cyoa-choice: kn2-gas
+	"Weapons: who needs them? The car is a weapon. The further that huge chunk of metal can be driven before it runs out of gas, the safer the journey is.
+	Also, maybe you'll run into a chainsaw." cyoa-text! goodfx 150 LOOT_GAS trunk.loot+ 4food2med
+;
+cyoa: knoobevent2
+	"Locking and Loading" cyoa-title! 0 to cyoaicon cyoaicon
+	soloer choosechar
+	($ Thegroup .. " takes a small detour to a stash of supplies that " .. cname-he .. " left there before. 
+ Besides a dinky bit of food and medicine, the stash had: " $) cyoa-text! 2 500 tone
+
+		choice( "Shotgun and 8 shells" )choice: kn2-shotty
+		choice( "Rifle and 12 ammo" )choice: kn2-rifle
+		choice( "Pistol and 20 bullets" )choice: kn2-pistol
+		choice( "150 extra Gas" )choice: kn2-gas
+;
+
+cyoa-choice: kn3recruit 
+	recruitee character# cyoa-char-icon!
+	($ rname .. " is now part of the team!
+	" .. cname .. " winces as the new recruit scarfs down the two long-hoarded food cans.
+	Onward to Canada!" $) cyoa-text! 2 300 tone
+	-2 LOOT_FOOD trunk.loot+ recruitee .recruit
+;
+cyoa-choice: kn3nope 
+	($ cname .. " peels out of there. 
+	" .. "NO ONE TOUCHES MY CANS OF FOOD." pbold .. "
+	It was probably the right choice." $) cyoa-text! goodfx morale++
+;
+
+cyoa: knoobevent3
+	"Ne'er-do-well Recruitment" cyoa-title!
+	soloer choosechar
+	char-gen to recruitee
+	WEAPON_SLEDGE recruitee .weapona!
+	recruitee character# cyoa-char-icon!
+	($ "A short drive away from " .. cname .. "'s hideout, " .. thegroup .. " runs into someone just wandering the road, sledgehammer over shoulder.
+	" .. rname .. " introduces " .. recruitee xhim .. "self, and offers to join the mission to Canada in exchange for some food to chow down on." $) cyoa-text! 3 500 tone
+		choice( "Recruit " .. rname .. " for 2 Food" )choice: kn3recruit
+		cchar charchoice( ": IT'S MY FOOD" )choice: kn3nope
+;
+
+: knoob4text ($ "Such incredible wisdom.
+" .. cname .. " is enriched with this knowledge. " .. cHe .. " will never forget those words." $) cyoa-text! goodfx morale++
+;
+cyoa-choice: kn4-eyes knoob4text wits++ ;
+cyoa-choice: kn4-hitit knoob4text mechanic++ ;
+cyoa-choice: kn4-sick knoob4text medical++ ;
+cyoa-choice: kn4-sayit knoob4text attitude++ loyalty++ cool-it++ ;
+cyoa: knoobevent4
+	"Wise Mentor" cyoa-title! 0 to cyoaicon cyoaicon
+	soloer choosechar
+	($ cname .. " decides to visit their grizzled mentor one last time before heading north.
+	" .. cname .. "'s mentor reminisces with " .. chim .. " and offers some final advice before the journey starts:" $) cyoa-text! 2 500 tone
+
+	choice( "NEVER TRUST ANYONE OR ANYTHING" )choice: kn4-eyes
+	choice( "IF SOMETHIN BREAKS JUST HIT IT" )choice: kn4-hitit
+	choice( "SICK PEOPLE ARE FAKIN IT" )choice: kn4-sick
+	choice( "SAY IT DON'T SPRAY IT" )choice: kn4-sayit
+;
+
+cyoa: knoobstart1
+	"The Death Road to Canada 5/27 Alpha" cyoa-title!
+	choice( "HIT THE ROAD" )choice
+		soloer choosechar cicon
+
+	($ cname .. " hears rumors that Canada is a safe place, free of the threat of zombies.
+	With nothing to gain from waiting around Florida, " .. che .. " decides to gather up some hoarded supplies and head north.
+	" .. cname .. " brings along a trusty baseball bat!" $) cyoa-text!
+		100 LOOT_GAS trunk.loot+ 2 LOOT_MEDICAL trunk.loot+ 8 LOOT_FOOD trunk.loot+ 1 WEAPON_BAT trunk.weapon+
+;
+
+} }
+
+

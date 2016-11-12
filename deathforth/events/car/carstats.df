@@ -1,0 +1,187 @@
+// X ' the-value +!   Example: 30 ' texttime +!
+// Or the-value 5 + to the-value
+
+
+road{
+
+0 	enum CAR_NONE
+	enum CAR_STARTER
+	enum CAR_VAN
+	enum CAR_PUTTPUTT
+	enum CAR_STATIONWAGON
+	enum CAR_MUSCLE1
+	enum CAR_MUSCLE2
+	enum CAR_HYBRID1
+	enum CAR_HYBRID2
+	enum CAR_GRANDPA
+	enum CAR_BUG
+	enum CAR_HOTROD
+	enum CAR_POLICE
+	enum CAR_MUTT
+	enum CAR_ICECREAM
+	enum CAR_FOODTRUCK
+	enum CAR_CLOWN
+	enum CAR_WTF
+	enum CAR_BUGVAN
+constant CAR_COUNT
+
+// TODO: PERSIST
+
+	5 value car-health
+	5 value car-max-health
+	15 value car-wear
+	20 value car-max-wear
+	0 value car-armor
+	3 value car-max-armor
+	2 value car-speed
+	4 value car-max-speed
+	1 value car-mpg
+	4 value car-repair
+	1 vehicle.which!
+	
+}
+
+events{ road{
+
+: car-update-display
+	car-health car-max-health / vehicle.health_display!
+	car-wear car-max-wear / vehicle.wear_display!
+	car-speed car-max-speed / vehicle.speed_display!
+	car-armor car-max-armor / vehicle.armour_display!
+;
+
+: get-car
+	vehicle.which! car-update-display goodfx
+;
+
+
+: get-car-suv
+	8 to car-health
+	8 to car-max-health
+	20 to car-wear
+	20 to car-max-wear
+	0 to car-armor
+	1 to car-speed
+	1.6 to car-mpg
+	4 to car-repair
+	19 get-car
+;
+
+
+: get-car-starter
+	5 to car-health
+	5 to car-max-health
+	20 to car-wear
+	20 to car-max-wear
+	0 to car-armor
+	2 to car-speed
+	1 to car-mpg
+	4 to car-repair
+	CAR_STARTER get-car
+;
+
+
+: get-car-muscle
+	' .morale2+ foreach-team-char
+	5 to car-health
+	5 to car-max-health
+	10 to car-wear
+	10 to car-max-wear
+	0 to car-armor
+	3 to car-speed
+	1.2 to car-mpg
+	3 to car-repair
+	CAR_MUSCLE1 get-car
+;
+
+
+: get-car-hybrid
+	3 to car-health
+	3 to car-max-health
+	20 to car-wear
+	20 to car-max-wear
+	0 to car-armor
+	2 to car-speed
+	0.6 to car-mpg
+	5 to car-repair
+	CAR_HYBRID1 get-car
+;
+
+
+: use-car get-car
+	// TODO: use car ID to decide what setup to use
+;
+
+voc{ textfill
+
+: +cr cr$ +textfill ;
+: +chr $chr +textfill ;
+: +text postpone +textfill ; immediate
+0x 17 $chr constant DOT1
+0x 1e $chr constant DOT2
+0x 18 $chr constant DOT3
+DOT2 value STAR
+DOT1 value DOT
+0x 1d $chr constant HOLE
+0x 1c $chr constant GAP
+: +dots for DOT +text next ;
+: +stars for STAR +text next ;
+: +holes for HOLE +text next ;
+: +gaps for GAP +text next ;
+: +starbar over +stars swap - +holes ;
+5 value barlength
+: +%starbar / barlength * >int dup +stars barlength swap - +holes ;
+: +purple 0x f4 $chr +text ;
+: +blue 0x f1 $chr +text ;
+: +green 0x f2 $chr +text ;
+: +red 0x f3 $chr +text ;
+: +white 0x f0 $chr +text ;
+
+// TODO: Maybe put different text in here depending on bar values
+: +repairstatus +purple "repair" +text +white ;
+: +wearstatus +purple "wear" +text +white ;
+: +armourstatus +purple "armour" +text +white ;
+
+// TODO: Days left to CANADA
+: +canadadays +red road{ nearcanada-day 1 + road-trip-days - } +text +white ;
+
+: vehicle-tab-text
+
+	DOT2 to STAR
+	0x 1b +chr " " +text car-health car-max-health +%starbar 3 +gaps
+		+repairstatus +cr
+	DOT3 to STAR
+	0x 19 +chr " " +text car-wear car-max-wear +%starbar 3 +gaps
+		+wearstatus +cr 
+
+	car-armor if
+		0x 1a +chr " "  +text car-armor +dots 5 car-armor - +gaps 3 +gaps
+		+armourstatus +cr
+	then
+
+	+cr "Only " +text +canadadays " driving days until CANADA!!!" +text +cr
+
+;
+
+}
+
+last to textfill-vehicle-tab
+
+} }
+
+cyoa{ road{
+
+
+
+} }
+
+: car-motor-dump
+	"CAR MOTOR:" print
+	"  freq1 " type vehicle.motor.freq1@ print
+	"  freq2 " type vehicle.motor.freq2@ print
+	"  duty1 " type vehicle.motor.duty1@ print
+	"  duty2 " type vehicle.motor.duty2@ print
+	"  filt_low " type vehicle.motor.filt_low@ print
+	"  filt_high " type vehicle.motor.filt_high@ print
+	"  q " type vehicle.motor.q@ print
+;

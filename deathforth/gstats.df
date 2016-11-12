@@ -1,0 +1,88 @@
+(* USAGE:
+	- put whatever stats you want into gstats-dump for saving
+	- to save the stats, use gstats{ save }
+	- to load, gstats{ load }
+	- modify stats easily using ' the-stat ++ or 123 ' the-stat +! etc.
+*)
+
+voc{ gstats } filesave{ gstats{
+
+"gstats.save" constant STATS_FILE
+
+// Save these
+0 value total-kills
+0 value total-med+
+0 value total-mech+
+0 value total-shoot+
+0 value total-fit+
+0 value total-str+
+0 value total-heal
+0 value toilets-opened
+
+0 value tutorial-done
+
+0 value wyk-highscore
+
+0 value wins-normal
+0 value wins-long
+0 value wins-special
+0 value wins-family
+0 value wins-specialEX
+0 value wins-familyEX
+0 value wins-kepa
+0 value wins-short
+0 value wins-marathon
+0 value wins-deadlier
+
+// Bugfix flags
+0 value bugfix-misplaced-files
+
+// Just like the other save file stuff, save your global stats by using saveval etc.
+// - per-game stats can just be saved along with the EXISTING save game stuff
+: gstats-dump
+	' total-kills save-val
+	' total-med+ save-val
+	' total-mech+ save-val
+	' total-shoot+ save-val
+	' total-fit+ save-val
+	' total-str+ save-val
+	' total-heal save-val
+	
+	' wyk-highscore save-val
+	
+	' toilets-opened save-val
+	' tutorial-done save-val
+
+	' wins-normal save-val
+	' wins-long save-val
+	' wins-special save-val
+	' wins-family save-val
+	' wins-specialEX save-val
+	' wins-familyEX save-val
+	' wins-kepa save-val
+	' wins-short save-val
+	' wins-marathon save-val
+	' wins-deadlier save-val
+
+	' bugfix-misplaced-files save-val
+
+	// special characters found
+;
+
+
+// : write-out savestr STATS_FILE $swrite ;
+: write-out STATS_FILE $strbuf-write ;
+
+: save
+	save-start
+		gstats-dump
+	save-end
+	write-out
+;
+
+: load STATS_FILE $load-savefile ;
+
+} }
+
+// TODO: Keep this here, or put it somewhere else where you want to load the stats if it matters
+gstats{ load }

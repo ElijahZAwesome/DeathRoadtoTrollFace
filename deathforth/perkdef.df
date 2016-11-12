@@ -1,0 +1,821 @@
+perkdef{
+
+: boring 2 4 rnd ;
+: hilow 50 %chance if 0 1 rnd else 5 6 rnd then ;
+
+// Traits
+
+: paranoidtrait args( chara )
+	"PARANOID APPLIED ON CHAR " type <- chara .name@ print
+	6 <- chara .wits! 0 <- chara .attitude!
+	<- chara .witsREV <- chara .attitudeREV
+;
+
+: oblivtrait args( chara )
+	"OBLIVIOUS APPLIED ON CHAR " type <- chara .name@ print
+	0 <- chara .wits! 6 <- chara .attitude!
+	<- chara .witsREV <- chara .attitudeREV
+;
+
+: bandittrait args( chara )
+	"BANDIT APPLIED ON CHAR " type <- chara .name@ print
+	0 <- chara .composure! 0 <- chara .loyalty!
+	boring <- chara .wits! boring <- chara .attitude!
+	<- chara .temperREV <- chara .loyaltyREV
+;
+
+: charmtrait args( chara )
+	"CHARMING APPLIED ON CHAR " type <- chara .name@ print
+	6 <- chara .wits! 6 <- chara .attitude!
+	<- chara .witsREV <- chara .attitudeREV
+;
+
+: gratingtrait args( chara )
+	"GRATING APPLIED ON CHAR " type <- chara .name@ print
+	0 <- chara .wits! 0 <- chara .attitude!
+	<- chara .witsREV <- chara .attitudeREV
+;
+
+: fiercetrait args( chara )
+	"FIERCE TEMPERED APPLIED ON CHAR " type <- chara .name@ print
+	0 <- chara .composure!
+	1 STAT_STRENGTH <- chara .stat+
+	<- chara .temperREV <- chara .strengthREV
+;
+
+: calmtrait args( chara )
+	"CALM UNDER FIRE APPLIED ON CHAR " type <- chara .name@ print
+	6 <- chara .composure!
+	1 STAT_SHOOTING <- chara .stat+
+	<- chara .temperREV <- chara .shootingREV
+;
+
+: nurturetrait args( chara )
+	"NURTURING APPLIED ON CHAR " type <- chara .name@ print
+	boring <- chara .wits! 6 <- chara .attitude!
+	2 STAT_MEDICAL <- chara .stat+
+	<- chara .attitudeREV <- chara .medicalREV
+;
+
+: inventtrait args( chara )
+	"INVENTIVE APPLIED ON CHAR " type <- chara .name@ print
+	6 <- chara .wits! boring <- chara .attitude!
+	2 STAT_MECHANICAL <- chara .stat+
+	<- chara .witsREV <- chara .mechanicREV
+;
+
+: frantictrait args( chara )
+	"FRANTIC WHINER APPLIED ON CHAR " type <- chara .name@ print
+	boring <- chara .wits! 0 <- chara .attitude!
+	1 STAT_DEXTERITY <- chara .stat+ 
+	-1 STAT_VITALITY <- chara .stat+ <- chara .health--
+	<- chara .attitudeREV
+;
+
+: toughtrait args( chara )
+	"RESILIENT TYPE APPLIED ON CHAR " type <- chara .name@ print
+	boring <- chara .attitude! 0 <- chara .wits!
+	1 STAT_VITALITY <- chara .stat+ <- chara .health++
+	<- chara .witsREV
+;
+
+: berserktrait args( chara )
+	"BERSERK! APPLIED ON CHAR " type <- chara .name@ print
+	0 <- chara .wits! 0 <- chara .attitude! 0 <- chara .composure! 0 <- chara .loyalty!
+	1 STAT_STRENGTH <- chara .bonus+
+	1 STAT_FITNESS <- chara .bonus+
+	1 STAT_SHOOTING <- chara .bonus+
+	3 STAT_STRENGTH <- chara .stat+
+	3 STAT_FITNESS <- chara .stat+
+	3 STAT_SHOOTING <- chara .stat+
+	-2 STAT_VITALITY <- chara .stat+ <- chara .health-- <- chara .health--
+	<- chara .witsREV <- chara .attitudeREV <- chara .temperREV <- chara .loyaltyREV 
+	<- chara .shootingREV <- chara .strengthREV <- chara .fitnessREV
+;
+
+: civiltrait args( chara )
+	"CIVILIZED! APPLIED ON CHAR " type <- chara .name@ print
+	6 <- chara .wits! 6 <- chara .attitude! 6 <- chara .composure! 6 <- chara .loyalty!
+	3 STAT_MEDICAL <- chara .stat+ 3 STAT_MECHANICAL <- chara .stat+
+	-3 STAT_MORALE <- chara .bonus+
+	<- chara .witsREV <- chara .attitudeREV <- chara .temperREV <- chara .loyaltyREV 
+	<- chara .mechanicREV <- chara .medicalREV
+;
+
+: mysterytrait args( chara )
+	"MYSTERIOUS APPLIED ON CHAR " type <- chara .name@ print
+	hilow <- chara .wits! hilow <- chara .attitude! hilow <- chara .composure!
+	50 %chance if 1 STAT_STRENGTH <- chara .stat+ else 1 STAT_SHOOTING <- chara .stat+ then
+	50 %chance if 1 STAT_STRENGTH <- chara .stat+ else 1 STAT_FITNESS <- chara .stat+ then  
+	50 %chance if 1 STAT_FITNESS <- chara .stat+ else 1 STAT_SHOOTING <- chara .stat+ then
+;
+
+: practicaltrait args( chara )
+	"PRACTICAL APPLIED ON CHAR " type <- chara .name@ print
+	boring <- chara .wits! boring <- chara .attitude! boring <- chara .composure!
+	// <- chara .witsREV <- chara .attitudeREV <- chara .temperREV
+	50 %chance if 1 STAT_STRENGTH <- chara .stat+ else 1 STAT_SHOOTING <- chara .stat+ then
+	50 %chance if 1 STAT_STRENGTH <- chara .stat+ else 1 STAT_FITNESS <- chara .stat+ then  
+	50 %chance if 1 STAT_FITNESS <- chara .stat+ else 1 STAT_SHOOTING <- chara .stat+ then
+	50 %chance if 1 STAT_MEDICAL <- chara .stat+ else 1 STAT_MECHANICAL <- chara .stat+ then
+	1 STAT_MEDICAL <- chara .stat+ 1 STAT_MECHANICAL <- chara .stat+	
+;
+
+: warriortrait args( chara )
+	"WARRIOR APPLIED ON CHAR " type <- chara .name@ print
+	2 STAT_STRENGTH <- chara .stat+ 2 STAT_FITNESS <- chara .stat+
+	boring <- chara .wits! boring <- chara .attitude! boring <- chara .composure!
+	<- chara .strengthREV <- chara .fitnessREV
+;
+
+// Perks
+
+: perkhighNUM 50 ; // 75
+: perklowNUM 20 ; // 25
+: healthcareNUMhigh 75 ; // 90
+: healthcareNUMlow 30 ;
+: pistolHIGH 25 ; // 20
+: pistolLOW 10 ; // 6
+: shotgunHIGH 50 ; // 45
+: shotgunLOW 20 ; // 15
+: guncrazyHIGH 75 ;
+: guncrazyLOW 30 ;
+: rifleHIGH 37 ; // 30
+: rifleLOW 15 ; // 10
+: carnutHIGH 40 ; // 60
+: carnutLOW 15 ; // 20
+: megabuffHIGH 100 ; // 120
+: megabuffLOW 40 ;
+: ultrafitHIGH 75 ; // 90
+: ultrafitLOW 30 ;
+
+: healthcareperk args( chara )
+	"HEALTHCARE APPLIED ON CHAR " type <- chara .name@ print
+	gstats{ total-heal } healthcareNUMhigh >= if
+		7 trunk-medical+
+		2 STAT_MEDICAL <- chara .stat+
+	else
+		gstats{ total-heal } healthcareNUMlow >= if
+			5 trunk-medical+
+			2 STAT_MEDICAL <- chara .stat+
+		else
+			4 trunk-medical+
+			1 STAT_MEDICAL <- chara .stat+
+		then
+	then crap-weapon <- chara .weapona!
+;
+	
+: mechanicperk args( chara )
+	"MECHANIC APPLIED ON CHAR " type <- chara .name@ print
+	gstats{ total-mech+ } perkhighNUM >= gstats{ total-fit+ } perkhighNUM >= and if
+		2 STAT_MECHANICAL <- chara .stat+ 2 STAT_FITNESS <- chara .stat+
+	else
+		gstats{ total-mech+ } perklowNUM >= gstats{ total-fit+ } perklowNUM >= if
+			2 STAT_MECHANICAL <- chara .stat+ 1 STAT_FITNESS <- chara .stat+
+		else
+			1 STAT_MECHANICAL <- chara .stat+ 1 STAT_FITNESS <- chara .stat+
+		then	
+	then WEAPON_WRENCH <- chara .weapona!
+	
+;
+
+: athleteperk args( chara )
+	"ATHLETE APPLIED ON CHAR " type <- chara .name@ print
+	gstats{ total-str+ } perkhighNUM >= gstats{ total-fit+ } perkhighNUM >= and if
+		2 STAT_FITNESS <- chara .stat+ 2 STAT_STRENGTH <- chara .stat+
+	else
+		gstats{ total-str+ } perklowNUM >= gstats{ total-fit+ } perklowNUM >= and if
+			2 STAT_FITNESS <- chara .stat+ 1 STAT_STRENGTH <- chara .stat+
+		else
+			1 STAT_FITNESS <- chara .stat+ 1 STAT_STRENGTH <- chara .stat+
+		then	
+	then sports-weapon <- chara .weapona!
+;
+
+: fighterperk args( chara )
+	"FIGHTER APPLIED ON CHAR " type <- chara .name@ print
+	gstats{ total-str+ } perkhighNUM >= gstats{ total-shoot+ } perkhighNUM >= and if
+		2 STAT_STRENGTH <- chara .stat+ 2 STAT_SHOOTING <- chara .stat+
+	else
+		gstats{ total-str+ } perklowNUM >= gstats{ total-shoot+ } perklowNUM >= and if
+			2 STAT_STRENGTH <- chara .stat+ 1 STAT_SHOOTING <- chara .stat+
+		else
+			1 STAT_STRENGTH <- chara .stat+ 1 STAT_SHOOTING <- chara .stat+
+		then	
+	then WEAPON_HATCHET <- chara .weapona!
+
+;
+
+: surgeonperk args( chara )
+	"SURGEON APPLIED ON CHAR " type <- chara .name@ print
+	gstats{ total-med+ } perkhighNUM >= gstats{ total-shoot+ } perkhighNUM >= and if
+		2 STAT_MEDICAL <- chara .stat+ 2 STAT_SHOOTING <- chara .stat+
+	else
+		gstats{ total-med+ } perklowNUM >= gstats{ total-shoot+ } perklowNUM >= and if
+			2 STAT_MEDICAL <- chara .stat+ 1 STAT_SHOOTING <- chara .stat+
+		else
+			1 STAT_MEDICAL <- chara .stat+ 1 STAT_SHOOTING <- chara .stat+
+		then	
+	then WEAPON_CLEAVER <- chara .weapona!
+;
+
+: gungineerperk args( chara )
+	"GUNGINEER APPLIED ON CHAR " type <- chara .name@ print
+	gstats{ total-mech+ } perkhighNUM >= gstats{ total-shoot+ } perkhighNUM >= and if
+		2 STAT_MECHANICAL <- chara .stat+ 2 STAT_SHOOTING <- chara .stat+
+	else
+		gstats{ total-mech+ } perklowNUM >= gstats{ total-shoot+ } perklowNUM >= and if
+			1 STAT_MECHANICAL <- chara .stat+ 2 STAT_SHOOTING <- chara .stat+
+		else
+			1 STAT_MECHANICAL <- chara .stat+ 1 STAT_SHOOTING <- chara .stat+
+		then	
+	then WEAPON_CROWBAR <- chara .weapona!
+;
+
+: pistolperk args( chara )
+	"PISTOL APPLIED ON CHAR " type <- chara .name@ print
+	gstats{ total-shoot+ } pistolHIGH >= if
+		3 STAT_SHOOTING <- chara .stat+	
+	else
+		gstats{ total-shoot+ } pistolLOW >= if
+			2 STAT_SHOOTING <- chara .stat+
+		else
+			1 STAT_SHOOTING <- chara .stat+
+		then	
+	then 30 trunk-bullet+
+	crap-weapon <- chara .weapona!
+	WEAPON_PISTOL <- chara .weaponb!
+;
+
+: shotgunperk args( chara )
+	"SHOTGUN APPLIED ON CHAR " type <- chara .name@ print
+	gstats{ total-shoot+ } shotgunHIGH >= if
+		3 STAT_SHOOTING <- chara .stat+
+	else
+		gstats{ total-shoot+ } shotgunLOW >= if
+			2 STAT_SHOOTING <- chara .stat+
+		else
+			1 STAT_SHOOTING <- chara .stat+
+		then	
+	then crap-weapon <- chara .weapona!
+	15 trunk-shotgun-shell+
+	WEAPON_SHOTGUN <- chara .weaponb!	
+;
+
+: guncrazyperk args( chara )
+	"GUNCRAZY APPLIED ON CHAR " type <- chara .name@ print
+	crap-weapon <- chara .weapona!
+	gstats{ total-shoot+ } guncrazyHIGH >= if
+		3 STAT_SHOOTING <- chara .stat+
+		WEAPON_SHOTGUN <- chara .weaponb! 8 trunk-shotgun-shell+
+		WEAPON_RIFLE <- chara .weaponc!	12 trunk-rifle-shell+
+		1 WEAPON_PISTOL trunk.weapon+
+	else
+		gstats{ total-shoot+ } guncrazyLOW >= if
+			2 STAT_SHOOTING <- chara .stat+
+			WEAPON_RIFLE <- chara .weaponc!	12 trunk-rifle-shell+
+		else
+			1 STAT_SHOOTING <- chara .stat+
+		then WEAPON_PISTOL <- chara .weaponb!
+	then 17 trunk-bullet+
+;
+
+: rifleperk args( chara )
+	"RIFLE APPLIED ON CHAR " type <- chara .name@ print
+	gstats{ total-shoot+ } rifleHIGH >= if
+		3 STAT_SHOOTING <- chara .stat+
+	else
+		gstats{ total-shoot+ } rifleLOW >= if
+			2 STAT_SHOOTING <- chara .stat+
+		else
+			1 STAT_SHOOTING <- chara .stat+
+		then	
+	then crap-weapon <- chara .weapona!
+	24 trunk-rifle-shell+
+	WEAPON_RIFLE <- chara .weaponb!	
+;
+
+: carnut-picker
+	0 stack
+		CAR_BUG shove
+		CAR_GRANDPA shove
+		CAR_MUSCLE1 shove
+		CAR_MUSCLE2 shove
+		CAR_HOTROD shove
+		CAR_STATIONWAGON shove
+	shuffles pops nip
+;
+
+: carnutperk args( chara )
+	"CAR NUT APPLIED ON CHAR " type <- chara .name@ print
+	gstats{ total-mech+ } carnutHIGH >= if
+		3 STAT_MECHANICAL <- chara .stat+
+	else
+		gstats{ total-mech+ } carnutLOW >= if
+			2 STAT_MECHANICAL <- chara .stat+
+		else
+			1 STAT_MECHANICAL <- chara .stat+
+		then	
+	then crap-weapon <- chara .weapona!
+	carnut-picker to starting-car
+	starting-car get-car
+;
+
+: megabuffperk args( chara )
+	"MEGABUFF APPLIED ON CHAR " type <- chara .name@ print
+	gstats{ total-str+ } megabuffHIGH >= if
+		4 STAT_STRENGTH <- chara .stat+
+	else
+		gstats{ total-str+ } megabuffLOW >= if
+			3 STAT_STRENGTH <- chara .stat+	
+		else
+			2 STAT_STRENGTH <- chara .stat+	
+		then	
+	then WEAPON_METAL <- chara .weapona!
+;
+
+: ultrafitperk args( chara )
+	"ULTRAFIT APPLIED ON CHAR " type <- chara .name@ print
+	gstats{ total-fit+ } ultrafitHIGH >= if
+		4 STAT_FITNESS <- chara .stat+
+	else
+		gstats{ total-fit+ } ultrafitLOW >= if
+			3 STAT_FITNESS <- chara .stat+
+		else
+			2 STAT_FITNESS <- chara .stat+
+		then	
+	then crap-weapon <- chara .weapona! 2 trunk-food+
+;
+
+: bruiserperk args( chara )
+	"BRUISER APPLIED ON CHAR " type <- chara .name@ print
+	gstats{ total-str+ } megabuffHIGH >= if
+		3 STAT_STRENGTH <- chara .stat+
+	else
+		gstats{ total-str+ } megabuffLOW >= if
+			2 STAT_STRENGTH <- chara .stat+	
+		else
+			1 STAT_STRENGTH <- chara .stat+	
+		then	
+	then WEAPON_BOXING <- chara .weapon_default! 
+	1 STAT_VITALITY <- chara .stat+	<- chara .health++
+	-1 STAT_DEXTERITY <- chara .bonus+
+;
+
+: martialartistperk args( chara )
+	"MARTIAL ARTIST APPLIED ON CHAR " type <- chara .name@ print
+	gstats{ total-fit+ } ultrafitHIGH >= if
+		2 STAT_FITNESS <- chara .stat+ 1 STAT_FITNESS <- chara .bonus+
+	else
+		gstats{ total-fit+ } ultrafitLOW >= if
+			2 STAT_FITNESS <- chara .stat+
+		else
+			1 STAT_FITNESS <- chara .stat+
+		then	
+	then 1 STAT_STRENGTH <- chara .stat+
+	WEAPON_KUNG <- chara .weapon_default! <- chara .nocanshoot
+	-10 STAT_SHOOTING <- chara .bonus+
+;
+
+: dogfriendperk args( chara )
+	"FRIEND OF DOG APPLIED ON CHAR " type <- chara .name@ print
+	crap-weapon <- chara .weapona!
+	<- chara statmod{ .dogpal }
+;
+
+: explorerperk args( chara )
+	"EXPLORER APPLIED ON CHAR " type <- chara .name@ print
+	crap-weapon <- chara .weapona!
+	<- chara statmod{ .explorer }
+;
+
+// To-do: Shield of Hope, Fire Safety 
+
+: shoot30level
+	gstats{ total-shoot+ } perklowNUM < if ($ "Train shooting " .. perklowNUM gstats{ total-shoot+ } - .. " more times. " $) else "" then
+;
+: shoot90level
+	gstats{ total-shoot+ } perkhighNUM < if ($ "Train shooting " .. perkhighNUM gstats{ total-shoot+ } - .. " more times. " $) else "" then
+;
+: mech30level
+	gstats{ total-mech+ } perklowNUM < if ($ "Train mechanical " .. perklowNUM gstats{ total-mech+ } - .. " more times. " $) else "" then
+;
+: mech90level
+	gstats{ total-mech+ } perkhighNUM < if ($ "Train mechanical " .. perkhighNUM gstats{ total-mech+ } - .. " more times. " $) else "" then
+;
+: fit30level
+	gstats{ total-fit+ } perklowNUM < if ($ "Train fitness " .. perklowNUM gstats{ total-fit+ } - .. " more times. " $) else "" then
+;
+: fit90level
+	gstats{ total-fit+ } perkhighNUM < if ($ "Train fitness " .. perkhighNUM gstats{ total-fit+ } - .. " more times. " $) else "" then
+;
+: str30level
+	gstats{ total-str+ } perklowNUM < if ($ "Train strength " .. perklowNUM gstats{ total-str+ } - .. " more times. " $) else "" then
+;
+: str90level
+	gstats{ total-str+ } perkhighNUM < if ($ "Train strength " .. perkhighNUM gstats{ total-str+ } - .. " more times. " $) else "" then
+;
+: med30level
+	gstats{ total-med+ } perklowNUM < if ($ "Train medical " .. perklowNUM gstats{ total-med+ } - .. " more times. " $) else "" then
+;
+: med90level
+	gstats{ total-med+ } perkhighNUM < if ($ "Train medical " .. perkhighNUM gstats{ total-med+ } - .. " more times. " $) else "" then
+;
+
+: NEXT_LEVEL cr$ .. cr$ .. "NEXT LEVEL: " rbold ;
+
+: mechaniclevel 
+	gstats{ total-mech+ } perkhighNUM >= gstats{ total-fit+ } perkhighNUM >= and if
+		($ "+ Gain 2 points in mechanical!
+		+ Gain 2 points in fitness!" $) 2 lvl
+	then;
+	gstats{ total-mech+ } perklowNUM >= gstats{ total-fit+ } perklowNUM >= and if
+		($ "+ Gain 2 points in mechanical!
+		+ Gain 1 point in fitness" .. NEXT_LEVEL .. mech90level .. fit90level $) 1 lvl
+	then;
+		($ "+ Gain 1 point in mechanical
+		+ Gain 1 point in fitness" .. NEXT_LEVEL .. mech30level .. fit30level $)
+;
+
+: athletelevel 
+	gstats{ total-str+ } perkhighNUM >= gstats{ total-fit+ } perkhighNUM >= and if
+		($ "+ Gain 2 points in fitness!
+		+ Gain 2 points in strength!" $) 2 lvl
+	then;
+	gstats{ total-str+ } perklowNUM >= gstats{ total-fit+ } perklowNUM >= and if
+		($ "+ Gain 2 points in fitness!
+		+ Gain 1 point in strength" .. NEXT_LEVEL .. fit90level .. str90level $) 1 lvl
+	then;
+		($ "+ Gain 1 point in fitness
+		+ Gain 1 point in strength" .. NEXT_LEVEL .. fit30level .. str30level $)
+;
+
+: fighterlevel 
+	gstats{ total-str+ } perkhighNUM >= gstats{ total-shoot+ } perkhighNUM >= and if
+		($ "+ Gain 2 points in strength!
+		+ Gain 2 points in shooting!" $) 2 lvl
+	then;
+	gstats{ total-str+ } perklowNUM >= gstats{ total-shoot+ } perklowNUM >= and if
+		($ "+ Gain 2 points in strength!
+		+ Gain 1 point in shooting" .. NEXT_LEVEL .. str90level .. shoot90level $) 1 lvl
+	then;
+		($ "+ Gain 1 point in strength
+		+ Gain 1 point in shooting" .. NEXT_LEVEL .. str30level .. shoot30level $)
+;
+
+: surgeonlevel 
+	gstats{ total-med+ } perkhighNUM >= gstats{ total-shoot+ } perkhighNUM >= and if
+		($ "+ Gain 2 points in medical!
+		+ Gain 2 points in shooting!" $) 2 lvl
+	then;
+	gstats{ total-med+ } perklowNUM >= gstats{ total-shoot+ } perklowNUM >= and if
+		($ "+ Gain 2 points in medical!
+		+ Gain 1 point in shooting" .. NEXT_LEVEL .. shoot90level .. med90level $) 1 lvl
+	then;
+		($ "+ Gain 1 point in medical
+		+ Gain 1 point in shooting" .. NEXT_LEVEL .. shoot30level .. med30level $)
+;
+
+: gungineerlevel 
+	gstats{ total-mech+ } perkhighNUM >= gstats{ total-shoot+ } perkhighNUM >= and if
+		($ "+ Gain 2 points in shooting!
+		+ Gain 2 points in mechanical!" $) 2 lvl
+	then;
+	gstats{ total-mech+ } perklowNUM >= gstats{ total-shoot+ } perklowNUM >= and if
+		($ "+ Gain 2 points in shooting!
+		+ Gain 1 point in mechanical" .. NEXT_LEVEL .. shoot90level .. mech90level $) 1 lvl
+	then;
+		($ "+ Gain 1 point in shooting
+		+ Gain 1 point in mechanical" .. NEXT_LEVEL .. shoot30level .. mech30level $)
+;
+
+: healthcarelevel 
+	gstats{ total-heal } healthcareNUMhigh >= if
+		($ "+ Start with 7 medical supplies!
+		+ Gain 2 points in medical!" $) 2 lvl
+	then;
+	gstats{ total-heal } healthcareNUMlow >= if
+		($ "+ Start with 5 medical supplies
+		+ Gain 2 points in medical!" .. NEXT_LEVEL .. "Heal teammates " .. healthcareNUMhigh gstats{ total-heal } - .. " more times." $) 1 lvl
+	then;
+		($ "+ Start with 4 medical supplies
+		+ Gain 1 point in medical" .. NEXT_LEVEL .. "Heal teammates " .. healthcareNUMlow gstats{ total-heal } - .. " more times." $)
+;
+
+: pistollevel 
+	gstats{ total-shoot+ } 20 >= if
+		($ "+ Gain 3 points in shooting!" $) 2 lvl
+	then;
+	gstats{ total-shoot+ } 6 >= if
+		($ "+ Gain 2 points in shooting" .. NEXT_LEVEL .. "Train shooting " .. pistolHIGH gstats{ total-shoot+ } - .. " more times." $) 1 lvl
+	then;
+		($ "+ Gain 1 point in shooting" .. NEXT_LEVEL .. "Train shooting " .. pistolLOW gstats{ total-shoot+ } - .. " more times." $)
+;
+
+: shotgunlevel 
+	gstats{ total-shoot+ } shotgunHIGH >= if
+		($ "+ Gain 3 points in shooting!" $) 2 lvl
+	then;
+	gstats{ total-shoot+ } shotgunLOW >= if
+		($ "+ Gain 2 points in shooting" .. NEXT_LEVEL .. "Train shooting " .. shotgunHIGH gstats{ total-shoot+ } - .. " more times." $) 1 lvl
+	then;
+		($ "+ Gain 1 point in shooting" .. NEXT_LEVEL .. "Train shooting " .. shotgunLOW gstats{ total-shoot+ } - .. " more times." $)
+;
+
+: riflelevel 
+	gstats{ total-shoot+ } rifleHIGH >= if
+		($ "+ Gain 3 points in shooting!" $) 2 lvl
+	then;
+	gstats{ total-shoot+ } rifleLOW >= if
+		($ "+ Gain 2 points in shooting" .. NEXT_LEVEL .. "Train shooting " .. rifleHIGH gstats{ total-shoot+ } - .. " more times." $) 1 lvl
+	then;
+		($ "+ Gain 1 point in shooting" .. NEXT_LEVEL .. "Train shooting " .. rifleLOW gstats{ total-shoot+ } - .. " more times." $)
+;
+
+: guncrazylevel 
+	gstats{ total-shoot+ } guncrazyHIGH >= if
+		($ "+ Gain 3 points in shooting!
+			+ Start with a shotgun, rifle, pistol, and ammo!!" $) 2 lvl
+	then;
+	gstats{ total-shoot+ } guncrazyLOW >= if
+		($ "+ Gain 2 points in shooting
+			+ Start with a rifle, pistol, and ammo!" .. NEXT_LEVEL .. "Train shooting " .. guncrazyHIGH gstats{ total-shoot+ } - .. " more times." $) 1 lvl
+	then;
+		($ "+ Gain 1 point in shooting
+			+ Start with a pistol and bullets!" .. NEXT_LEVEL .. "Train shooting " .. guncrazyLOW gstats{ total-shoot+ } - .. " more times." $)
+;
+
+: carnutlevel 
+	gstats{ total-mech+ } carnutHIGH >= if
+		($ "+ Gain 3 points in mechanical!" $) 2 lvl
+	then;
+	gstats{ total-mech+ } carnutLOW >= if
+		($ "+ Gain 2 points in mechanical" .. NEXT_LEVEL .. "Train mechanical " .. carnutHIGH gstats{ total-mech+ } - .. " more times." $) 1 lvl
+	then;
+		($ "+ Gain 1 point in mechanical" .. NEXT_LEVEL .. "Train mechanical " .. carnutLOW gstats{ total-mech+ } - .. " more times." $)
+;
+
+: megabufflevel 
+	gstats{ total-str+ } megabuffHIGH >= if
+		($ "+ Gain 4 points in strength!" $) 2 lvl
+	then;
+	gstats{ total-str+ } megabuffLOW >= if
+		($ "+ Gain 3 points in strength" .. NEXT_LEVEL .. "Train strength " .. megabuffHIGH gstats{ total-str+ } - .. " more times." $) 1 lvl
+	then;
+		($ "+ Gain 2 points in strength" .. NEXT_LEVEL .. "Train strength " .. megabuffLOW gstats{ total-str+ } - .. " more times." $)
+;
+
+: ultrafitlevel 
+	gstats{ total-fit+ } ultrafitHIGH >= if
+		($ "+ Gain 4 points in fitness!" $) 2 lvl
+	then;
+	gstats{ total-fit+ } ultrafitLOW >= if
+		($ "+ Gain 3 points in fitness" .. NEXT_LEVEL .. "Train fitness " .. ultrafitHIGH gstats{ total-fit+ } - .. " more times." $) 1 lvl
+	then;
+		($ "+ Gain 2 points in fitness" .. NEXT_LEVEL .. "Train fitness " .. ultrafitLOW gstats{ total-fit+ } - .. " more times." $)
+;
+
+: martialartistlevel 
+	gstats{ total-fit+ } ultrafitHIGH >= if
+		($ "+ Gain 3 points in fitness, 1 in strength!
+			+ Fitness can go 1 point over the usual maximum!" $) 2 lvl
+	then;
+	gstats{ total-fit+ } ultrafitLOW >= if
+		($ "+ Gain 2 points in fitness, 1 in strength" .. NEXT_LEVEL .. "Train fitness " .. ultrafitHIGH gstats{ total-fit+ } - .. " more times." $) 1 lvl
+	then;
+		($ "+ Gain 1 points in fitness, 1 in strength" .. NEXT_LEVEL .. "Train fitness " .. ultrafitLOW gstats{ total-fit+ } - .. " more times." $)
+;
+
+: bruiserlevel 
+	gstats{ total-str+ } megabuffHIGH >= if
+		($ "+ Gain 3 points in strength!" $) 2 lvl
+	then;
+	gstats{ total-str+ } megabuffLOW >= if
+		($ "+ Gain 2 points in strength" .. NEXT_LEVEL .. "Train strength " .. megabuffHIGH gstats{ total-str+ } - .. " more times." $) 1 lvl
+	then;
+		($ "+ Gain 1 points in strength" .. NEXT_LEVEL .. "Train strength " .. megabuffLOW gstats{ total-str+ } - .. " more times." $)
+;
+
+: doglevel 
+	gstats{ total-kills } 1000 >= if
+		($ "+ 70% extra chance for random recruit to be a dog" $) 2 lvl
+	then;
+	gstats{ total-kills } 300 >= if
+		($ "+ 35% extra chance for random recruit to be a dog" .. NEXT_LEVEL .. "Destroy " .. 1000 gstats{ total-kills } - .. " more zombies." $) 1 lvl
+	then;
+		($ NEXT_LEVEL .. "Destroy " .. 300 gstats{ total-kills } - .. " more zombies." $)
+;
+
+: explorerlevel 
+	gstats{ total-kills } 1500 >= if
+		($ "+ ABL rerolling costs much less gas!" $) 2 lvl
+	then;
+	gstats{ total-kills } 500 >= if
+		($ "+ ABL rerolling costs less gas" .. NEXT_LEVEL .. "Destroy " .. 1500 gstats{ total-kills } - .. " more zombies." $) 1 lvl
+	then;
+		($ NEXT_LEVEL .. "Destroy " .. 500 gstats{ total-kills } - .. " more zombies." $)
+;
+
+// Definitions
+
+: defperks
+	// Perks
+
+	"Mechanic" $perk
+		($ "The car is life! Note: Not necessarily a COMPETENT mechanic.
+		+ Start with a wrench
+		" .. mechaniclevel $) $desc
+		' mechanicperk applyword
+		
+	"Athlete" $perk
+		($ "An athletic past translates well into zombie survival.
+		+ Start with a random sports weapon
+		" .. athletelevel $) $desc
+		' athleteperk applyword
+		
+	"Fighter" $perk
+		($ "This person has always been a real fighter.
+		+ Start with a hatchet
+		" .. fighterlevel $) $desc
+		' fighterperk applyword
+		
+	"Surgeon" $perk
+		($ "Has a good intuition of anatomy and a real steady hand.
+		+ Start with a cleaver
+		" .. surgeonlevel $) $desc
+		' surgeonperk applyword
+		
+	"Gungineer" $perk
+		($ "Good with anything mechanical, and guns are mechanical.
+		+ Start with a crowbar
+		" .. gungineerlevel $) $desc
+		' gungineerperk applyword
+		
+(*	"Pistoleer" $perk
+		($ "Pistols aim fast and ammo is plentiful!
+		+ Start with a pistol and 30 bullets
+		" .. pistollevel $) $desc
+		' pistolperk applyword
+		
+	"Rifle Shooter" $perk
+		($ "A rifle shot can pierce a line of zombies, in the right hands!
+		+ Start with a rifle and 24 ammo
+		" .. riflelevel $) $desc
+		' rifleperk applyword
+		
+	"Shotgunner" $perk
+		($ "Everyone knows that shotguns are the true anti-zombie weapon!
+		+ Start with a shotgun and 15 shells
+		" .. shotgunlevel $) $desc
+		' shotgunperk applyword *)
+
+	"Martial Artist" $perk
+		($ "No weapons? No problem!
+		+ Start with a powerful two-hit unarmed attack!!
+		- Refuses to shoot firearms!!
+		" .. martialartistlevel $) $desc
+		' martialartistperk applyword		
+		
+	"Big Bruiser" $perk
+		($ "Moves slow, hits real hard, takes a beating!
+		+ Start with a better unarmed attack! Take one more hit than normal!
+		- Slower walking speed!
+		" .. bruiserlevel $) $desc
+		' bruiserperk applyword
+	
+	"Gun Collector" $perk
+		($ "You knew hoarding all those guns would be useful! Eventually. You just knew it!
+		" .. guncrazylevel $) $desc
+		' guncrazyperk applyword
+	
+	"Health Care" $perk
+		($ "Jerks get bit by zombies all the time. Better be prepared! 
+		" .. healthcarelevel $) $desc
+		' healthcareperk applyword	
+		
+	"Car Nut" $perk
+		($ "Being a car enthusiast is practically a superpower now!
+		+ Start with a nicer car
+		" .. carnutlevel $) $desc
+		' carnutperk applyword
+				
+	"Megabuff" $perk
+		($ "Possibly too swole to control. Handy for picking up and throwing heavy furniture!
+		+ Start with a metal pipe
+		" .. megabufflevel $) $desc
+		' megabuffperk applyword
+		
+	"Ultrafit" $perk
+		($ "All that yoga really paid off!
+		+ Start with some granola bars
+		" .. ultrafitlevel $) $desc 
+		' ultrafitperk applyword
+				
+	"Friend of Dog" $perk
+		($ "This person loves dogs, and tends to run into them!
+		+ Angry dogs may become friendly
+		" .. doglevel $) $desc
+		' dogfriendperk applyword
+
+	"Explorer" $perk
+		($ "Some people just have a really good sense of direction when driving!
+		+ Get one extra location choice during Always Be Looting events!
+		" .. explorerlevel $) $desc
+		' explorerperk applyword
+
+	// Traits
+	"Paranoid" $trait
+		"A combination of high perception and extreme pessimism lets someone brace for the worst!
+		+ May identify traits in new recruits
+		+ Always on the lookout for danger
+		- Can be a real grumpus" $desc
+		' paranoidtrait applyword
+	"Oblivious" $trait
+		"A great outlook on life combined with not being very perceptive allows for some magical feats of denial!
+		+ May ignore despair
+		- Bad rolls for perception and wits" $desc
+		' oblivtrait applyword
+	"Charming" $trait
+		"From perception of others, a good attitude, and pure charisma, there's something about this person that opens doors!
+		+ Charms way into free stuff or out of bad situations
+		- Can't charm way out of everything" $desc
+		' charmtrait applyword
+	"Irritating" $trait
+		"This person thinks they're soooooo cool. But they're not! They're just annoying!
+		+ Tell people to 'Cool it'
+		- Anger pretty much everybody" $desc
+		' gratingtrait applyword
+	"Bandit" $trait
+		"Being untrustworthy can be an asset in the post-apocalypse.
+		+ Rip others off
+		- Rip the group off
+		- Ticking time bomb" $desc
+		' bandittrait applyword
+	"Mysterious Past" $trait
+		"This person... has a mysterious past......
+		+ 3 points given to fight skills at random
+		- Randomized and extreme personality!" $desc
+		' mysterytrait applyword
+	"Practical" $trait
+		"Has a variety of useful skills, but is kind of boring.
+		+ 3 points given to fight skills at random
+		+ 3 points given to support skills at random
+		- Boring personality" $desc
+		' practicaltrait applyword
+	"Warrior" $trait
+		"Good start on zombie thwacking skills, with a nondescript personality.
+		+ 2 points more strength!
+		+ 2 points more fitness!
+		- Boring personality" $desc
+		' warriortrait applyword
+	"Fierce Tempered" $trait
+		"Someone's got a bad temper! The aggression can come in handy.
+		+ 1 extra point in strength
+		- Bad temper due to low composure
+		+ Temper can sometimes be good" $desc
+		' fiercetrait applyword
+	"Calm Under Fire" $trait
+		"Calm and collected. Useful when shooting into a horde!
+		+ Very calm due to high composure
+		+ 1 extra point in shooting" $desc
+		' calmtrait applyword
+	"Nurturing" $trait
+		"Always thinking of others! Somehow not zombie food yet.
+		+ 2 points more medical!
+		+ Great attitude!
+		- May be an act" $desc
+		' nurturetrait applyword
+	"Inventive" $trait
+		"Comfortable with machinery, such as cars.
+		+ 2 points more mechanical!
+		+ Great wits checks!
+		- May need more practice to repair car" $desc
+		' inventtrait applyword
+	"Frantic Whiner" $trait
+		"Kind of a fragile sort. But really good at fleeing!
+		+ Run speed bonus!
+		- Takes one less hit than normal
+		- Bad attitude" $desc
+		' frantictrait applyword
+	"Resilient Type" $trait
+		"Really tough! The muscle! Not a long term planner.
+		+ Takes one more hit than normal
+		- Bad wits rolls" $desc
+		' toughtrait applyword
+	"BERSERK!" $trait
+		"Destroy all zombies! Never retreat! Oh no, I got bit!
+		+ 4 points to strength, fitness, and shooting!!
+		+ Can go one over the maximum for the above stats!!!
+		- Super low personality stats! Dies in one bite!!" $desc
+		' berserktrait applyword
+	"Civilized" $trait
+		"Retains old values before world went crazy. This is good and bad.
+		+ Super high loyalty and personality stats!
+		+ 3 points to medical and mechanical skills!!
+		- Permanent and significant morale penalty!!" $desc
+		' civiltrait applyword
+;
+
+defperks
+
+}
