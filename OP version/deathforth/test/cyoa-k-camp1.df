@@ -1,0 +1,93 @@
+uses base.df
+uses charfilt.df
+uses charstats.df
+uses road.df
+
+cyoa{ road{
+
+cyoa-choice: camp1-run
+	($ cname .. " decides that the spot looks TOO safe and " .. ghe .. " ends up PEELING OUT of there, fast, without eating or sleeping.
+	" .. cname .. "'s attitude gets even more paranoid." $) cyoa-text! 
+	cchar ' .morale2- foreach-team-char-except attitude-- witsREV attitudeREV ;
+cyoa-choice: camp1-eat
+	($ Thegroup .. " sets up camp in this boring but safe looking spot.
+	" $) cyoa-text! chowtime ;
+cyoa: camp1
+	"Boring Stop" cyoa-title! cyoaicon
+	($ Thegroup .. " finds an empty spot along the road that looks as good for camping as any.
+	" $) cyoa-text! 3 500 tone
+		most-paranoid if
+				"The weather is clear and there's no sign of danger in any direction." +text
+				choice( "Eat and Rest" )choice: camp1-eat
+				charchoice( ": Can't fool me!" )choice: camp1-run
+		then;
+		chowtime
+;
+
+: campstoryreveal 5 %chance if .loyaltyREV else 
+	33 %chance if .temperREV else 
+		50 %chance if .witsREV else .attitudeREV then
+	then 
+then ;
+cyoa-choice: camp2-story
+	solo if
+	($ soloname .. " swaps stories with pals and it's a very morale-boosting team-building group experience despite everyone else being imaginary.
+	" .. soloname .. " also eats a whole bag of stale marshmallows instead of eating dinner." $) cyoa-text! soloer .morale++ then;
+	($ Thegroup .. " swaps stories about themselves while roasting marshmallows." $) cyoa-text! 
+	' campstoryreveal foreach-team-char +cr chowtime ;
+cyoa-choice: camp2-eat
+	($ Thegroup .. " decides to stash the marshmallows for later, and sets up camp." $) cyoa-text! 1 LOOT_FOOD trunk.loot+ +cr chowtime ;
+cyoa: camp2
+	"Old Campground" cyoa-title! cyoaicon
+	someone choosechar
+	($ Thegroup .. " finds an abandoned campground with a fire pit. " .. cname-He .. " even finds an old, somewhat stale pack of marshmallows!
+	" $) cyoa-text! 3 500 tone
+				choice( "Eat and Rest" )choice: camp2-eat
+				choice( "Tell Stories" )choice: camp2-story
+;
+
+cyoa: camp3
+	"Quick Stop" cyoa-title! cyoaicon
+	($ "After a long drive, " .. thegroup .. " finds a safe place to camp. The night passes with no incidents.
+	" $) cyoa-text! 3 500 tone chowtime
+;
+
+cyoa: camp4
+	"Passing Out" cyoa-title! cyoaicon
+	($ "Exhausted after an extra long drive, " .. thegroup .. " scouts out a camping spot and falls asleep immediately after.
+	" $) cyoa-text! 3 500 tone chowtime
+;
+
+cyoa-choice: camp5-no
+	"Darn It" cyoa-title!
+	($ " Next morning, " .. thegroup .. " goes to siphon the cars, but notices a large horde of zombies approaching and the gas has to be abandoned.
+	" $) cyoa-text! chowtime
+;
+cyoa-choice: camp5gas
+	"Gassy Night" cyoa-title!
+	($ cname .. " siphons the gas, but accidentally swallows a bit and gets really, really sick that night instead of sleeping.
+	" $) cyoa-text! chowtime 100 LOOT_GAS trunk.loot+ morale2-
+;
+cyoa: camp5
+	"Night Siphon" cyoa-title! cyoaicon
+	($ Thegroup .. " sets up camp late. On the nearby highway is a bunch of abandoned cars. They're broken, but earlier " .. somename .. " checked the cars and found many have a little bit of gas.
+	Would you like to send someone to siphon out the gas?" $) cyoa-text! 3 500 tone
+		' camp5gas 3 #cyoa-team-choice
+		choice( "Wait until morning" )choice: camp5-no			
+;
+
+// Uncomment the below as you want, to overwrite the hotkeys from cyoa-example-7types
+
+ ' camp1 1 hotkey!
+ ' camp2 2 hotkey!
+ ' camp3 3 hotkey!
+ ' camp4 4 hotkey!
+ ' camp5 5 hotkey!
+// ' bitefx 6 hotkey!
+// ' goodfx 7 hotkey!
+ ' card3-cyoa 8 hotkey!
+' goodfx 9 hotkey!
+
+} }
+
+

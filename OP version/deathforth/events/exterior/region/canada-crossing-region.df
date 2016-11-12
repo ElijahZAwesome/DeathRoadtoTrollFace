@@ -1,0 +1,1003 @@
+0 value the-pm
+
+cyoa{
+
+: giver2 -10 the-pm .vel.z! ;
+: giver "GIVE 'ER!" the-pm .yellmsg 60 ' giver2 timer_add ;
+
+: end-it
+	clear-cyoa
+	45 ' giver timer_add
+	road{ death-road-finale }
+;
+
+: ending-choice
+	choice( "Onward to Canada!" )choice: end-it
+;
+
+cyoa-bridge: wyk-ending
+	($ "The " .. "honor" rbold .. " and " .. "reputation" rbold .. " of the Would You Kindly team is saved by " .. wyk-name .. "!" $) text!
+	"Here are some codes to celebrate!" rainbold +crtext
+		gstats{ ' wyk-highscore ++ }
+		wyk-win1 +crtext 
+		wyk-win2 +crtext
+		wyk-win3 +crtext
+		filesave{ save-global-stats }
+		delete-the-game
+
+	ending-choice
+;
+
+cyoa: pm-dead
+	the-pm .character@ choosechar cicon
+	"Prime Minister" cchar .name!
+	"NICE ONE, DINGUS" cyoa-title!
+	($ " You've somehow murdered the " .. cname .. "! 
+	Congratulations! " .. "YOU LOSE!" fbold $) text!
+	sfx{ creepy }
+	delete-the-game
+	mission-kills gstats{ ' total-kills +! }
+	mission-kills road{ ' kills-this-game +! }
+	// Put in Hoser Ending - Snatch Defeat from Victory achievement
+	choice( "DANG IT" )choice: quit-to-title
+;
+
+cyoa: cyoa-the-pm
+	the-pm player face-each-other
+	the-pm .character@ choosechar cicon
+//	clear-cyoa
+	"Prime Minister" cchar .name!
+	
+	"Victory Over The Death Road" cyoa-title!
+			mission-kills gstats{ ' total-kills +! }
+			mission-kills road{ ' kills-this-game +! }
+	($ "YOU'VE GOT A CAN-DO ATTITUDE, EH?
+	CONGRATS ON MAKING IT TO CANADA!" pbold .. "
+
+	The " .. cname .. " himself makes " .. thegroup .. " honourary citizen" ganVSs .. " of Canada. He welcomes " ..
+		ghim .. " to the last remaining nation on Earth!" $) text! goodfx
+
+	wyk? if 
+		($ wyk-name rainbold .. " has won the game!" $) +crtext
+		
+		gstats{ wyk-highscore } 5 < if 
+			choice( "WYK Victory!" )choice: wyk-ending
+		then;
+	then
+
+	ending-choice
+;
+
+}
+
+map{ regiondef{
+
+9 value roadw
+roadw 2 / value roadrad
+1 value shoulder
+
+0 value guardgroup
+0 value guardcount
+0 value zomb-maxclump
+0 value zomb-maxspread
+
+: xy-zombclump tanchor! zomb-maxclump zombs-clump ;
+: xy-zombspread tanchor! 8 zomb-maxspread zombs-spread ;
+
+
+: cleanpave args( x1 y1 x2 y2 )
+
+	<- x1 <- y1 <- x2 <- y2 clean-floorbox
+	<- x1 <- y1 1+ <- x2 <- y2 1- pavebox-nograss
+;
+
+0 value siege-state
+0 value siege-counter
+0 value siege-timeout
+0 value mountie1
+0 value mountie-state
+0 var mountie-stack
+
+: snowy particle{
+	30 for
+		new -2 -3 frnd vel.z! 60 2.5 * ticks! 30 fade_out!
+		-1 1 frnd 4 * vel.x!
+		-1 1 frnd vel.y!
+		0 layer!
+		0 30 rnd wait!
+		particles_base_id 15 + spriteid!
+		glowy
+		2dup pos!
+	next
+	2drop
+} ;
+
+: snowpoof args( thing )
+	<- thing .pos snowy
+	0 360 frnd 6 for
+		particle{
+			new particles32_base_id 3 + spriteid!
+			1 layer! } <- thing .pos particle{ pos!
+			30 60 rnd ticks!
+			5 fade_out!
+			1.01 grow!
+//			-0.25 vel.z!
+			0.75 1 frnd scale!
+			0 5 rnd wait!
+			60 + dup anglexy 0.5 1 frnd xymul vel!
+			vel.y@ 0.5 * vel.y!
+			0.25 clr.r!
+			0.25 clr.g!
+			glowy
+			vel.y@ 0 > if 0 layer! then
+}
+	next
+	drop
+;
+
+: siege-over 2 siege-state = ;
+
+: goto args( me )
+	<- me .destpos.y!
+	<- me .destpos.x!
+	60 5 * <- me .ai.follow!
+	<- me .ai.follow@ <- me .ai.assess!
+;
+
+: wink$ 3 $chr ;
+
+0 stack
+	"Welcome to Canada, eh!" shove
+	"You made it, eh? Beauty!" shove
+	"Are you transporting any fruits or vegetables?" shove
+	"P.E.I. potatoes are the BEST" shove
+	"Those zombies were just a givin'er!" shove
+	"Let's play some road hockey later" shove
+	RAINBOW 0x dd $chr .. " I'm Bud the Spud from the bright red mud " .. 0x de $chr .. shove
+	"Zombies don't like all the snow we've got up here" shove
+	"It's ABAYAHT time Y'ALL came up to see us Y'KNOW? " WHITE .. wink$ .. shove
+	"I'm eating a poutine after this" shove
+	RAINBOW 0x dd $chr .. " TAKE OFF! TO THE GREAT WHITE NORTH! "  .. 0x de $chr .. shove
+	"Want a can of pop?" shove
+	"Where's your skidoo?" shove
+	"HOW'S SHE BOOTIN'ER?" shove
+	"My favourite anime is Dragon Ball ZED" shove
+	"De washroom is just over der on de left" shove
+	"Here, wipe that gunk off with this serviette" shove
+	"Please remove all firearms from your knapsack" shove
+	"Did you bring a toboggan?" shove
+	"I betcha crapped your gitch back there" shove
+	"Don't pet the beavers" shove
+	"We say ABOOT, not ABOOT. GEEZ" shove
+	"Here's a toonie for a double-double at Timmies" shove
+	"What's your favourite toque colour?" shove
+value canada-sayings-base
+canada-sayings-base shuffles var canada-sayings
+
+: random-canada-saying
+	canada-sayings depths 0= if canada-sayings-base shuffles to canada-sayings then
+	pops nip
+;
+
+: endcanada-chat args( me )
+	<- me .character@ .pet@ 3 = if
+		"MOORF!!"
+	else
+		<- me .character@ .specialtype@ 38 = <- me .character@ .specialmode@ 1 = or if
+			random-canada-saying else "NURP squerp!" 
+		then
+	then
+
+	BLUE swap .. <- me .sprayit clear-cyoa ( $cyoa-ok-dialog )
+; 
+
+: pm-dead-check the-pm .character@ .dead? if cyoa{ pm-dead } then ;
+
+// Check periodically for other logic we should do
+: guard-time args( me )
+	// pm-dead-check
+	siege-over 0= if 60 <- me .timer! then;
+
+	the-pm thing# <- me .ai.followid!
+	0 <- me .character@ .party!
+
+	0.1 <- me .character@ .ai.wander_chance!
+	4 <- me .rad.x!
+	3 <- me .mass!
+
+	map{ pixelw 0.5 * } dup
+		<- me .character@ .ai.follow_leash!
+		<- me .character@ .ai.safety_leash!
+
+	' endcanada-chat <- me .cyoa!
+;
+
+
+: guard-events args( me eventid )
+	<- eventid THING_EVENT_TIMER <> if then;
+	<- me guard-time
+;
+
+: mecha-events args( me eventid )
+	<- eventid THING_EVENT_TIMER <> if then;
+
+	1 <- me .timer!
+ 
+	<- me .vel.z@ 0.1 >= if then;
+
+	<- me .anim.substate@ if
+		' guard-events <- me .events!
+		"LET ME TAKE CARE OF IT EH" <- me statmod{ .mecha-say }
+		90 <- me .stun!
+	then;
+
+	60 <- me .timer!
+
+	90 <- me .stun!
+	sfx{ 5 nextpri ruffle 0.125 fx .pitch! 1000 fx .d! 2 fx .scale! }
+	2 for <- me snowpoof next
+	blast
+	<- me .pos3 lt .pos.z! lt .pos.y! lt .pos.x!
+	-1 lt .hitcheck.blast!
+	5 lt .hitcheck.knockback!
+	2 lt .hitcheck.power!
+	20 rumble
+	1 <- me .anim.substate!
+;
+
+: spawn-mecha-mountie
+	new-npc lt .character@ .mechamountify
+	player .pos.x@ rndsign 24 * + player .pos.y@ lt .pos!
+	-200 lt .pos.z!
+	1 lt .unseen!
+	1000 lt .character@ .health!
+	1 lt .character@ .party!
+	' mecha-events lt .events!
+	1 lt .timer!
+	0.1 lt .vel.z!
+	180 lt .aim_angle!
+	60 lt .stun!
+	sfx{ pip 1000 fx .freq! 750 fx .freq2! 25 fx .a! 1000 fx .d! 0.9 fx .s! 5 fx .r! }
+;
+
+: do-guard-end ;
+
+: trigger-end-state
+
+	// Point up arrow
+	player .pos.y@ 40 > if
+		60 view_w 0.5 * 40 particle{ new pos!
+			-0.5 vel.y!
+			icons16_id 0x 18 + spriteid!
+			0 global_colour!
+			0.25 1 0.5 rgb!
+			60 ticks!
+			5 fade_in!
+			5 fade_out!
+			-3 layer!
+		}
+	then
+
+	the-pm .cyoa@ 0= if
+		cyoa{ ' cyoa-the-pm } the-pm .cyoa!
+	then
+
+	splat-zombies-here
+	kill-zombies-here
+;
+
+: next-state
+	' siege-state ++
+	siege-state 2 * 4 + 500 debug-tone
+	2 to siege-timeout
+	0 to siege-counter
+;
+
+: zomb-near? player .nearest_enemy_dist2@ 100 dup * < ;
+: zombs-near player .threat_count@ ;
+: zombs-dead-enough zombs-near 10 <= ;
+
+12 constant MECHA_COUNT_IN
+5 constant ZOMB_WAVES
+
+: siege-update args( me )
+//	DEBUG_BUILD if siege-state ":" .. siege-counter .. mountie1 .report then
+
+	<- me .retrigger_timer
+
+	siege-timeout 0 > if ' siege-timeout -- 16 50 debug-tone then;
+
+	pm-dead-check
+	
+	siege-state case
+
+		// Just arrived near the gate
+		0 of
+			' siege-counter ++
+			zombs-near 5 <= siege-counter 10 >= or if next-state then;
+		endof
+
+		// Wave zombies
+		1 of
+			siege-counter MECHA_COUNT_IN >= if
+				zombs-dead-enough if next-state 0 to siege-timeout then;
+			then;
+
+			' siege-counter ++
+
+			siege-counter MECHA_COUNT_IN = if spawn-mecha-mountie then
+
+			// Is below line right? Trying to make zombie spawn amount vary by road difficulty roadsdiff is road{ road-difficulty }, but this seems to make zombies spawn behind the gate
+			// - No you were adjusting the angle, not zombie count
+			siege-counter ZOMB_WAVES <= if 180 ( <-angle ) 50 ( <-amount ) roadsdiff *  zwave-angle then
+		endof
+
+		2 of
+			// Cue the end
+//			30 <- me .repeating_timer
+			trigger-end-state
+		endof
+	endcase
+;
+
+: spawn-pm
+	new-npc 66 lt .character@ .specialtype!
+	180 lt .aim_angle!
+	0 lt .character@ .ai.wander_chance!
+	1 lt .unseen!
+	1 lt .no_hit!
+	10 lt .rad.x!
+	xyp.xy tile>pos lt .pos!
+	lt to the-pm
+	immovable
+;
+
+mission{
+	: .mountie-saying args( thing )
+		<- thing .character@ .weapona@ if
+			rnd5050 if "Slapshot" else "Face off" then
+		else
+			rnd5050 if "Sorry" else "It's aboot time" then
+		then
+		BLUE swap $cat <- thing statmod{ .yellmsg }
+	;
+
+	0 stack
+	"M'EH" shove
+	"MOO?" shove
+	"MUHH" shove
+	"MERRP" shove
+	var moose-sayings
+
+	: .moose-saying args( thing )
+		moose-sayings rndpicks nip
+		BLUE swap $cat <- thing statmod{ .report }
+		sfx{ sing 500 fx .d! 0.25 fx .pitch! 0.9 fx .q! <- thing .adjust-vol }
+	;
+
+	0 stack
+	"squ'eh" shove
+	"squeep?" shove
+	"squh" shove
+	"squerp!" shove
+	var beaver-sayings
+
+	: .beaver-saying args( thing )
+		beaver-sayings rndpicks nip
+		BLUE swap $cat <- thing statmod{ .report }
+		sfx{ sing 500 fx .d! 2.25 fx .pitch! 0.9 fx .q! <- thing .adjust-vol }
+	;
+
+	: .mountie-start args( thing )
+		<- thing .mountie-saying
+		<- thing .pos.y@ 32 + <- thing .destpos.y!
+		<- thing .pos.x@ <- thing .destpos.x!
+		30 <- thing .ai.assess!
+		60 <- thing .ai.follow!
+		0 <- thing .unseen!
+	;
+
+	: .moose-start args( thing )
+		<- thing .moose-saying
+		<- thing .pos.y@ 32 + <- thing .destpos.y!
+		<- thing .pos.x@ <- thing .destpos.x!
+		30 <- thing .ai.assess!
+		60 <- thing .ai.follow!
+		0 <- thing .unseen!
+	;
+
+	: .beaver-start args( thing )
+		<- thing .beaver-saying
+		<- thing .pos.y@ 32 + <- thing .destpos.y!
+		<- thing .pos.x@ <- thing .destpos.x!
+		30 <- thing .ai.assess!
+		60 <- thing .ai.follow!
+		0 <- thing .unseen!
+	;
+
+	: mountie-join locals( chara thing )
+		mountie-stack
+		1 for
+			depths nip if
+				pops dup -> thing .character@ -> chara
+				LOCATION_MISSION <- chara .party!
+				0.1 <- chara .ai.wander_chance!
+				player .mass@ <- thing .mass!
+				<- chara .pet@ 0= if
+					<- chara .beaver? 0= if <- thing .mountie-start else
+					<- thing .beaver-start then
+					
+				else
+					<- thing .moose-start
+				then
+			then
+		next
+		drop
+	;
+
+	thing-event: guard-event
+		eventid THING_EVENT_TIMER = if me guard-time then;
+	;
+
+	thing-event: mountie-event
+		eventid THING_EVENT_TIMER = if me guard-time then;
+		eventid THING_EVENT_DID_HIT <> if then;
+		5 onein not if then;
+		me .mountie-saying
+	;
+
+	thing-event: moose-event
+		eventid THING_EVENT_TIMER = if me guard-time then;
+		eventid THING_EVENT_DID_HIT <> if then;
+		5 onein not if then;
+		me .moose-saying
+	;
+
+	thing-event: beaver-event
+		eventid THING_EVENT_TIMER = if me guard-time then;
+		eventid THING_EVENT_DID_HIT <> if then;
+		5 onein not if then;
+		me .beaver-saying
+	;
+
+	thing-event: siegelogic
+		eventid THING_EVENT_TIMER <> if then;
+
+		mountie-state if me siege-update then
+
+		mountie-state 1 = if
+			2 sec>tick me .repeating_timer
+			mountie-stack depths if mountie-join exit else 2 to mountie-state then
+		then;
+
+		me .retrigger_timer
+
+		mountie-state if then;
+
+		player .pos.y@ me .pos.y@ - 64 < if
+			1 to mountie-state
+			mountie-stack shuffles
+		then;
+	;
+}
+
+: mountlast mission{ ' siegelogic } lt .events! 1 sec>tick lt .repeating_timer ;
+
+: stackmountie mountie-stack lt shove ;
+
+: .mountie-ai args( chara )
+	0 <- chara .ai.loot_chance!
+	0 <- chara .ai.wander_chance!
+	30 <- chara .ai.follow_leash!
+	100 <- chara .ai.safety_leash!
+	100 <- chara .ai.attack_dist!
+	1 <- chara .ai.attack_chance!
+	0.1 <- chara .ai.safety_threshold!
+	0 <- chara .ai.flee_dist!
+	-1 <- chara .ai.attack_level!
+	1 <- chara .ai.rush_chance!
+;
+
+: .guardchar args( chara )
+	<- chara .mountiefy
+	<- chara .mountie-ai
+	WEAPON_KARATE <- chara .weapon_default!
+	guardcount 1 + xyp.y + guardgroup + 1 & if WEAPON_XTREME <- chara .weapona! then
+	170 guardgroup 1 & 20 * + lt .aim_angle!
+	xyp.xy tile>pos lt .pos!
+	1 lt .unseen!
+
+	guardgroup 2 < if
+//		12 lt .rad.x!
+		18 lt .rad.x!
+		mountie1 0= if lt to mountie1 then
+		mission{ ' guard-event } lt .events!
+		immovable
+	else
+		1 <- chara .party! stackmountie mission{ ' mountie-event } lt .events!
+	then
+
+	60 lt .timer!
+;
+
+: spawn-gate-guards
+	3 for
+		new-npc lt .character@ .guardchar
+		i 2 - 1.25 * lt .jumpx
+		' guardcount ++
+	next
+
+	' guardgroup ++
+;
+
+: spawn-fore-guards
+	2 for
+		new-npc lt .character@ .guardchar
+		i 1 - 2 * 1 - 1.25 * lt .jumpx
+		' guardcount ++
+	next
+
+	' guardgroup ++
+;
+
+: spawn-moose new-npc lt .character@ .guardchar lt .character@ args( chara )
+	<- chara .moosify 0 <- chara .weapona!
+	100 <- chara .ai.follow_leash!
+	100 <- chara .ai.safety_leash!
+	150 <- chara .ai.attack_dist!
+	mission{ ' moose-event } lt .events!
+	170 guardcount 1 & 20 * + lt .aim_angle!
+	' guardcount ++
+;
+
+
+: spawn-beaver new-npc lt .character@ .guardchar lt .character@ args( chara )
+	<- chara .beaverify 0 <- chara .weapona!
+	50 <- chara .ai.follow_leash!
+	100 <- chara .ai.safety_leash!
+	100 <- chara .ai.attack_dist!
+	170 guardcount 1 & 20 * + lt .aim_angle!
+	mission{ ' beaver-event } lt .events!
+	' guardcount ++
+;
+
+
+: spawn-beavers 3 for spawn-beaver next ;
+
+
+: bridgerail >r
+	cury boxb = if 2drop then;
+	tile@ TILE_BLOCK over .id!
+	dup LAYER_WALLTOP 0 .tile_layer.flipx!
+	dup LAYER_WALLTOP 0 0 .tile_layer.off!
+	LAYER_WALLTOP street_tiles_base_id 0x 90 + r> +
+		cury boxt = if 2 + then
+		cury boxb 1- = if 4 + then
+		.lspriteid!
+;
+
+: bridgerail0 0 bridgerail ;
+: bridgerail1 1 bridgerail ;
+
+
+: plotvroadline
+	dup 1 & if 2drop then;
+	tile@ LAYER_FLOOR street_tiles_base_id 0x 6b + .lspriteid!
+;
+
+: vroadline plotvroadline ;
+
+: vroadlines
+	tb.x 3 + tb.y 1+ tb.h 3 - ' plotvroadline vline
+	tb.x 6 + tb.y 1+ tb.h 3 - ' plotvroadline vline
+;
+
+
+0 value bsx
+0 value bsy
+0 value bey
+
+0 value br1y
+0 value br3y
+
+
+: br1-start to br1y drop ;
+: br2-end args( x y )
+	LAYER_WALLTOP max-layer!
+	LAYER_FLOORTOP min-layer!
+	<- x br1y <- x shoulder + <- y conclot
+	<- x br1y <- y br1y - ' bridgerail1 vline
+;
+
+: br3-start to br3y drop ;
+
+: br4-end args( x y )
+	LAYER_WALLTOP max-layer!
+	LAYER_FLOOR min-layer!
+	<- x shoulder - br3y <- x <- y conclot
+	<- x br3y <- y br3y - ' bridgerail0 vline
+;
+
+
+0 value bfx
+0 value bfy
+0 value snx
+0 value sny
+' plotgrass >defer ft
+
+: river tile@
+	dup LAYER_FLOOR particles32_base_id 0x 10 + .lspriteid!
+	dup LAYER_FLOOR 0 0 .tile_layer.off!
+	dup LAYER_FLOOR 0 .tile_layer.flipx!
+
+	dup LAYER_FLOORTOP particles32_base_id 0x 11 + .lspriteid!
+	dup LAYER_FLOORTOP 0 0 .tile_layer.off!
+	dup LAYER_FLOORTOP 0 .tile_layer.flipx!
+
+	TILE_BLOCK over .id!
+	drop
+;
+
+: riveredge
+	2dup river
+	2dup tile@ LAYER_FLOORTOP particles32_base_id 0x 12 + .lspriteid!
+	floorblocked
+;
+
+: bank 2dup tile@ args( x y t )
+	<- t LAYER_WALLSIDE street_tiles_base_id 0x 99 + 0 3 rnd + .lspriteid!
+	<- t LAYER_FLOORTOP particles32_base_id 0x 12 + .lspriteid!
+	<- x <- y 2dup riveredge floorblocked
+;
+
+
+: bushy >r tile@
+	dup LAYER_WALLSIDE .lspriteid@ if r> 2drop then;
+	dup LAYER_WALLSIDE rnd5050 .tile_layer.flipx!
+	dup LAYER_WALLSIDE street_tiles_base_id 0x 89 + 0 3 rnd + .lspriteid!
+	LAYER_WALLSIDE 0 r> .tile_layer.off!
+;
+
+: snowbushy >r tile@
+	dup LAYER_WALLSIDE rnd5050 .tile_layer.flipx!
+	dup LAYER_WALLSIDE street_tiles_base_id 0x 7c + 0 3 rnd + .lspriteid!
+	LAYER_WALLSIDE 0 r> .tile_layer.off!
+;
+
+: logbridge >r tile@
+	dup LAYER_FLOORTOP 0 .tile_layer.flipx!
+	LAYER_FLOORTOP street_tiles_base_id 0x 79 + r> + .lspriteid!
+;
+
+: cliff 2dup floorblocked tile@
+	dup LAYER_FLOORTOP 0 .tile_layer.flipx!
+	LAYER_FLOORTOP street_tiles_base_id 0x a9 + 0 3 rnd + .lspriteid!
+;
+
+: cliffedge 2dup floorblocked tile@
+	dup LAYER_FLOORTOP 0 .tile_layer.flipx!
+	LAYER_FLOORTOP street_tiles_base_id 0x ba + 0 3 rnd + .lspriteid!
+;
+
+: curb tile@
+	dup LAYER_WALLSIDE street_tiles_base_id 0x 2e + .lspriteid!
+	LAYER_WALLSIDE -1 1 rnd -1 1 rnd .tile_layer.off!
+;
+
+: grassedge
+	tile@ dup LAYER_FLOORTOP street_tiles_base_id 0x 71 + .lspriteid!
+	LAYER_FLOORTOP 0 0 -3 rnd .tile_layer.off!
+;
+
+: trashblock tile@ tbwreck ;
+: trashs plotswreck ;
+
+: tollbooth
+	tanchor!
+	map{
+		0 prefab{ 5 3 0 shop }
+	}
+
+	tanchorx 3 + tanchorx!
+	tanchory 1 - tanchory!
+
+	3 for
+		street_tiles_base_id 0x a0 + 3 i - + tanchor solidwall
+		tanchor tile@ LAYER_WALLSIDE -10 -4 .tile_layer.off!
+		tanchory 1+ tanchory!
+	next
+;
+
+: checkpoint >r tanchor! map{ 0 prefab{ r> cabin } } ;
+
+: mygrass 2dup plotgrass tile@ TILE_LOT swap .id! ;
+
+0 value pvx
+0 value pvy
+
+: pavelotstart to pvy to pvx ;
+: pavelotend >r >r pvx pvy r> r> LAYER_FLOORTOP max-layer! pavedlot ;
+
+// : logwall barbfence ;
+
+: logwall barbfence ;
+
+: logup	args( x y s )
+
+	street_tiles_base_id 0x ca + <- s + -> s
+
+	3 for
+		<- s i 1- 0x 10 * +
+		<- x <- y solidwall
+		<- y 1- -> y
+	next
+;
+
+: cleanstreet tile@ LAYER_FLOOR street_tiles_base_id 0x 5 + .lspriteid! ;
+
+
+: snowy particle{
+	20 30 rnd for
+		new snowtype 0.5 vel.z! 60 2.5 * ticks! 30 fade_in!
+		pos.x@ view_w 0.5 * 32 + -1 1 frnd * + pos.x!
+		pos.y@ view_h 0.5 + -1 1 frnd * + 64 - pos.y!
+		0 30 rnd wait!
+	next
+} ;
+
+// last 1 hotkey!
+
+mission{
+	thing-event: snowcheck
+		eventid THING_EVENT_TIMER <> if then;
+		me .retrigger_timer
+		me .pos.y@ player .pos.y@ 32 - < if then;
+		snowy
+	;
+}
+
+: snowlast mission{ ' snowcheck } lt .events! 1 sec>tick lt .repeating_timer ;
+
+: pt
+	xyp.xy ft // Plot the current floor by default
+
+	xyp.i char . = if then;
+	xyp.i char g = if ' mygrass to ft then;
+	xyp.i char G = if ' mygrass to ft xyp.xy ft then;
+
+	xyp.i char P = if ' plotpave-nograss to ft xyp.xy ft then;
+	xyp.i char p = if ' plotpave-nograss to ft then;
+
+	xyp.i char S = if ' plotsnow to ft xyp.xy ft then;
+
+	xyp.i char { = if xyp.x to bfx then;
+	xyp.i char } = if bfx xyp.y xyp.x barbfence then;
+	xyp.i char d = if xyp.x plotdirt then;
+	xyp.i char ^ = if xyp.xy river then;
+
+	xyp.i char v = if xyp.xy riveredge then;
+	xyp.i char \ = if xyp.xy cliff then;
+	xyp.i char / = if xyp.xy cliffedge xyp.xy -4 -5 rnd snowbushy then;
+	xyp.i char | = if xyp.xy bank then;
+	xyp.i char o = if xyp.xy -8 -7 rnd bushy then;
+	xyp.i char L = if xyp.xy 1 logbridge then;
+	xyp.i char l = if xyp.xy 0 logbridge then;
+	xyp.i char O = if xyp.xy 2 logbridge then;
+	xyp.i char c = if ' plotpave to ft xyp.xy ft xyp.xy grassedge xyp.xy curb then;
+	xyp.i char r = if xyp.xy vroadline then;
+	xyp.i char T = if xyp.xy trashblock then;
+	xyp.i char t = if xyp.xy trashs then;
+	xyp.i char J = if xyp.xy crap-aroundxy then;
+	xyp.i char j = if 3 onein if then; xyp.xy crap-aroundxy then;
+	xyp.i char W = if xyp.xy tile>pos carwreck lt .pos! drift 0 lt .flip! then;
+	xyp.i char w = if xyp.xy tile>pos carwreck lt .pos! drift then;
+
+	xyp.i char z = if xyp.xy xy-zombspread then; // A spread-out pack of zombies
+	xyp.i char Z = if xyp.xy xy-zombclump then; // A concentrated clump of zombies
+
+	xyp.i char 1 = if xyp.xy br1-start then;
+	xyp.i char 2 = if xyp.xy br2-end then;
+	xyp.i char 3 = if xyp.xy br3-start then;
+	xyp.i char 4 = if xyp.xy br4-end then;
+
+	xyp.i char 5 = if xyp.xy 0 logup then;
+	xyp.i char 6 = if xyp.xy 1 logup then;
+	xyp.i char 7 = if xyp.xy 2 logup then;
+
+	xyp.i char b = if xyp.xy swap 1- swap 2dup 0x 6c 0 3 rnd + floortop
+		2dup tile@ LAYER_FLOORTOP 0 .tile_layer.flipx!
+		tile@ LAYER_FLOORTOP -1 1 rnd 0 .tile_layer.off! then;
+	xyp.i char B = if xyp.xy swap 1+ swap 2dup 0x 6c 0 3 rnd + floortop
+		2dup tile@ LAYER_FLOORTOP 1 .tile_layer.flipx!
+		tile@ LAYER_FLOORTOP -1 1 rnd 0 .tile_layer.off! then;
+
+	xyp.i char ( = if xyp.xy 0x 63 floortop ' plotpave-nograss to ft then;
+	xyp.i char ) = if xyp.xy 0x 65 floortop ' plotgrass to ft xyp.xy ft then;
+
+	xyp.i char < = if ' cleanstreet to ft xyp.xy ft xyp.xy 0x 98 floortop then;
+	xyp.i char > = if xyp.xy 0x 96 floortop ' plotsnow to ft then;
+
+	xyp.i char h = if xyp.xy pavelotstart then;
+	xyp.i char H = if xyp.xy pavelotend then;
+
+	xyp.i char * = if xyp.xy tollbooth then;
+	xyp.i char @ = if xyp.xy 9 checkpoint then;
+	xyp.i char # = if xyp.xy 4 checkpoint then;
+	xyp.i char & = if xyp.xy tile>pos snowpine lt .pos! then;
+	xyp.i char I = if xyp.xy tile>pos igloo lt .pos! then;
+	xyp.i char $ = if snowlast then;
+	xyp.i char m = if spawn-gate-guards then;
+	xyp.i char M = if spawn-fore-guards then;
+	xyp.i char y = if spawn-moose then;
+	xyp.i char Y = if spawn-beavers then;
+	xyp.i char X = if mountlast then;
+	xyp.i char k = if spawn-pm then;
+;
+
+"
+S.....&.........B.<...k....>.b...&...
+.&.....&........B.<........>.b.&...&.
+..&........&....B.<........>.b.......
+&......&........B.<........>.b.......
+...&............B.<........>.b.......
+@........@......B.<m.#....m>@b.......
+..................<y......Y>.........
+666666666666666667<M.5667.M>566666666
+................B.<........>.b...&.X.
+................B.<...rr...>.b.&.....
+.....&.........&B.<...rr...>.b..&....
+.&..........&...B.<...rr...>.b&......
+................B.<...rr...>.b......&
+................B.<...rr...>.b.......
+................B.<...rr...>.b.......
+..............&.B.<...rr...>.b.......
+................B.<...rr...>.b&......
+................B.<...rr...>.b.......
+....z...........B.<...rr...>.b.......
+...........&....B.<...rr...>.b....z..
+......z.........B.<...rr...>.b...&...
+...I............B.<...rr...>.b.z.....
+...........z..z.B.<.z.rr.z.>.b.......
+..............&.B.<...rr...>.b.......
+................B.<...rr...>.b.&.....
+................B.<...rr...>.b.......
+.............&..B.<...rr...>.b.&.....
+................B.<...rr...>.b..&....
+...........&....B.<...rr...>.b.......
+................B.<...rr...>.b.......
+................B.<...rr...>.b.......
+..............&.B.<...rr...>.b&......
+...............&B.<...rr...>.b.......
+................B.<...rr...>.b.&.....
+................B.<...rr...>.b.......
+................B.<...rr...>.b.......
+..........&....&.1<...rr...>3...&....
+......&......&....<...rr...>..&....&.
+..........&.......<...rr...>zz...&$..
+//////////////////<...rr...>/////////
+\\\\\\\\\\\\\\\\\\P...rr...P\\\\\\\\\
+\\\\\\\\\\\\\\\\\\P...rr...P\\\\\\\\\
+\\\\\\\\\\\\\\\\\\P...rr..jP\\\\\\\\\
+\\\\\\\\\\\\\\\\\\P...rr...P\\\\\\\\\
+\\\\\\\\\\\\\\\\\\Pj..rr...P\\\\\\\\\
+||||||||||||||||||P...rr...P|||||||||
+^^^^^^^^^^^^^^^^^^P...rr..jP^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P...rr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P...rr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^Pj..rr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P...rr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P...rr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P...rr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P..jrr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P...rr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P...rr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P...rr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P.z.rr..jP^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P...rr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P...rr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P...rr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P..jrr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P...rr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P...rr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^Pj..rr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P...rr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P...rr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P...rr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P..jrr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P...rr.z.P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P...rr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P...rr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P...rr..jP^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P...rr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P...rr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P...rr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P..jrr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^PW..rr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P...rr...P^^^^^^^^^
+^^^^^^^^^^^^^^^^^^P...rr...P^^^^^^^^^
+TTTTTTTTTTTTTTTTTt.........jtTTTTTTTT
+.................T..z...z...T........
+.................T..........T........
+P...............T2J........T4T.......
+{...............}J..........T{......}
+J..............J..............W..J..J
+TJJ.J..J....T....................T..T
+..TTTT........J.............W...TT..T
+.........*...........W..........T...T
+..............................JT....T
+...............Z............TT.T....T
+........................W..TTTTTTJTTT
+........w..................TTTJTTTTTT
+............................TTTTTJTTT
+.....................W.....TTTJTTTTTT
+............T..............TTTTTTTTTT" // *)
+
+constant maplayout
+
+: plotsroadjunk 2dup tile@ // args( tile )
+	.id@ TILE_STREET = if plotsjunk then;
+	2drop
+;
+
+: lowerjunk 0 h 60 - w 1- h 1- ' plotsroadjunk boxcall ;
+
+: plotmap
+	tstart 0 -1 maplayout xyplot: pt "PLOTTING TIME " type tend
+;
+
+: site-setup
+	mission{
+		no-leaving
+		no-edge-spawns
+	}
+
+	0 to siege-state
+	0 to siege-counter
+	0 to siege-timeout
+	0 to mountie-state
+	0 to guardgroup
+	0 to guardcount
+	0 stack to mountie-stack
+	0 to mountie1
+	5sdiff 2 + to zomb-maxclump // TODO: Adjust for difficulty?
+	5sdiff 2 + to zomb-maxspread // TODO: Adjust for difficulty?
+	pavement
+	0 0 w h clean-floorbox
+
+	// Following, minimum
+	2 region.zombie_aggro!
+
+	plotmap
+//	5diff %zombs
+	end-music
+//	mission{ cyoa{ ' canada-cyoa mission-top-leave! } }
+
+	// For zombie threat check filtering during final battle
+	view_h view_w + 0.5 * 0.75 * pchar .ai.threat_radius!
+;
+
+	location: test
+		max-rooms: 4
+		entry-tags: test entry
+
+		script: timeofday o'clock
+		pre-script:
+		post-script: 
+
+		room-choice: test entry
+			room-script: 
+			room-weight: 1
+			room-count: 1
+			filter-only
+
+
+	 region: canada border
+		w: maplayout layoutw 
+		h: maplayout layouth
+
+		loc-choice: something
+			loc-weight: 1
+			loc-count: 1
+
+		post-script: site-setup
+} }

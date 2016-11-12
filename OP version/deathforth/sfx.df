@@ -1,0 +1,6 @@
+uses base.df
+
+: .adjust-vol .loudness sfx{ fx .scale@ * fx .scale! } ;
+: xy-vol xyloudness sfx{ fx .scale@ * fx .scale! } ;
+
+: tweet sfx{ fm 12 16 frnd fx .pitch! 50 fx .d! } ;

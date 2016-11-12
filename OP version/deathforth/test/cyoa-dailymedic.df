@@ -1,0 +1,102 @@
+uses base.df
+uses charfilt.df
+uses charstats.df
+uses road.df
+
+cyoa{ road{
+
+: sum-health .health@ + ;
+: team-health 0 ' sum-health foreach-team-char ;
+
+: healerskill cchar .medical ;
+: healformula 1 healerskill 2 / +
+	>int ;	// Convert the result to an integer, thus truncating
+			// decimal part
+
+cyoa: healthcheck
+	"HEALTH STATUS" cyoa-title!
+	someone choosechar cicon
+	($ cname .. " is a dinkus with " .. cchar .vitality@ .. " max health.
+	" .. cname .. " currently has " .. cchar .health@ .. " health.
+	" .. cHe .. " has " .. cchar damage .. " damage.
+	" .. cHe .. " has " .. healerskill .. " medical skill and could heal for " .. healformula .. " health. 
+	Total team health is " .. team-health .. "
+	Total team damage is " .. team-damage $) cyoa-text! 3 500 tone
+;
+
+: donomedskill
+	+cr ($ cname .. " is really terrible at this! " $) +text badfx
+
+	10 %chance if    
+		($ cHe .. " ends up making things worse!" $) +text bitefx
+		most-hurt team-attacked
+	else
+		40 %chance LOOT_MEDICAL trunk.loot@ 1 > and if
+			($ "Still, " .. che .. " starts to figure it out." $) +text	
+			medical++
+			-2 LOOT_MEDICAL trunk.loot+
+		then
+	then
+
+	medicalREV
+;
+
+
+// TODO: Consider using VARIABLE RESULT WORD: 
+// chara is only included on the stack if there is a most-hurt
+// character (chara true), otherwise it's just false (0)
+: ?most-hurt ( -- chara true | false )
+	most-hurt dup damage if true exit then drop false ;
+
+cyoa: dailyhealing
+	"Heal Up!" cyoa-title!
+	medicalest choosechar cicon
+	($ cname .. " rolls up " .. chis .. " sleeves and starts tending to " .. ghis .. " wounds." $) cyoa-text!
+
+	healerskill 0= if donomedskill then;
+
+	LOOT_MEDICAL trunk.loot@ 2 < if
+	+cr ($ cname .. " tries to help, but lacks enough medical supplies." $) +text badfx
+	then;
+
+	healformula for 
+		LOOT_MEDICAL trunk.loot@ 1 > if
+			most-hurt damage 0 > if
+				most-hurt .health++ 
+				-2 LOOT_MEDICAL trunk.loot+
+			then
+		then
+	next goodfx
+	+cr
+
+	team-damage 1 < if 
+		($ cname .. " treats all of " .. ghis .. " wounds! " $) 
+		else
+		($ cname .. " treats some of " .. ghis .. " wounds! " $)
+	then +text
+
+	LOOT_MEDICAL trunk.loot@ 2 < if
+		($ cHe .. " runs low on medical supplies." $) +text // THE GROUP RUNS LOW?
+	then
+;
+
+: dailyheal 
+	team-damage 1 < if then;
+	dailyhealing
+;
+
+// Uncomment the below as you want, to overwrite the hotkeys from cyoa-example-7types
+
+ ' dailyheal 1 hotkey!
+ ' healthcheck 2 hotkey!
+// ' goodfx 3 hotkey!
+// ' bitefx 4 hotkey!
+// ' goodfx 5 hotkey!
+// ' bitefx 6 hotkey!
+// ' goodfx 7 hotkey!
+// ' card-deleteme 8 hotkey!
+' goodfx 9 hotkey!
+
+} }
+
+

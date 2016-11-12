@@ -1,0 +1,272 @@
+(*
+	SCRIPT SYNTAX: <command> followed by ,
+	<integer> , 			pause
+	<string> , 				event blurb
+	<chara> , <string> , 	character blurb
+
+	CHARACTER COMMANDS:
+	rndchar 				picks a random team character as char1
+	char1					last character picked is char1
+	char2					relative to char1
+	char3					relative to char1
+	char4					relative to char1
+
+	To execute the road finale sequence, construct a script stack as in the example, and then pass it to
+	road{ do-road-finale }
+*)
+
+
+road{ 
+
+: 1stchar 0 #teamchar ;
+
+0 value canuck_
+0 value lastchar_
+
+: char1 lastchar_ #teamchar ;
+: char2 lastchar_ 1 + team-count % #teamchar ;
+: char3 lastchar_ 2 + team-count % #teamchar ;
+: char4 lastchar_ 3 + team-count % #teamchar ;
+: rndchar 0 team-count 1- rnd dup to lastchar_ #teamchar ;
+
+: canuck canuck_ #character ;
+
+0 var script-stack
+
+particle{ : new new 0 global_colour! ; }
+
+: penguin
+	particle{ new animtype 4 frames! 8 10 rnd framerate!
+	particles_base_id 0x 60 + spriteid!
+	0 layer!
+	view_w 96 + pos.x!
+	-16 -2 2 frnd + pos.y!
+	-1 vel.x!
+	view_w 90 + ticks!
+	}
+;
+
+: create-mountie
+	char-gen dup .mountiefy character# to canuck_
+	canuck_ road.special_charid!
+	1 canuck .party!
+	0 canuck .female!
+	"Mountie" canuck .name!
+;
+
+: modedefeated
+	gamedef{ ' defaultmode gamemode? } if 
+		gstats{ ' wins-normal ++ }
+		($ "Death Road Normal Mode completed" ..
+		gstats{ wins-normal } 1 > if
+			": " .. gstats{ wins-normal }
+		else
+			"!"
+		then $)
+	then
+	gamedef{ ' longroad gamemode? } if
+		gstats{ ' wins-long ++ }
+		($ "Long Winding Road Mode completed" ..
+		gstats{ wins-long } 1 > if
+			": " .. gstats{ wins-long }
+		else
+			"!"
+		then $)
+	then	
+	
+	gamedef{ ' specialchars gamemode? } if 
+		gstats{ ' wins-special ++ }
+		($ "Rare Characters Mode completed" ..
+		gstats{ wins-special } 1 > if
+			": " .. gstats{ wins-special }
+		else
+			"!"
+		then $)
+	then	
+	
+	gamedef{ ' familiarchars gamemode? } if
+		gstats{ ' wins-family ++ }
+		($ "Familiar Characters Mode completed" ..
+		gstats{ wins-family } 1 > if
+			": " .. gstats{ wins-family }
+		else
+			"!"
+		then $)
+	then	
+	
+	gamedef{ ' specialcharsEX gamemode? } if
+		gstats{ ' wins-specialEX ++ }
+		($ "Rare Characters EXTREME completed" ..
+		gstats{ wins-specialEX } 1 > if
+			": " .. gstats{ wins-specialEX }
+		else
+			"!"
+		then $)
+	then	
+
+	gamedef{ ' familiarcharsEX gamemode? } if
+		gstats{ ' wins-familyEX ++ }
+		($ "Familiar Characters EXTREME completed" ..
+		gstats{ wins-familyEX } 1 > if
+			": " .. gstats{ wins-familyEX }
+		else
+			"!"
+		then $)
+	then	
+	
+	gamedef{ ' kepamode gamemode? } if
+		gstats{ ' wins-kepa ++ }
+		($ "K*E*P*A Mode completed" ..
+		gstats{ wins-kepa } 1 > if
+			": " .. gstats{ wins-kepa }
+		else
+			"!"
+		then $)
+	then
+	
+	gamedef{ ' shortroad gamemode? } if
+		gstats{ ' wins-short ++ }
+		($ "Short Trip to Heck Mode completed" ..
+		gstats{ wins-short } 1 > if
+			": " .. gstats{ wins-short }
+		else
+			"!"
+		then $)
+	then
+	
+	gamedef{ ' marathonmode gamemode? } if
+		gstats{ ' wins-marathon ++ }
+		($ "Marathon Mode completed" ..
+		gstats{ wins-marathon } 1 > if
+			": " .. gstats{ wins-marathon }
+		else
+			"!"
+		then $)
+	then
+	
+	gamedef{ ' deadlier gamemode? } if
+		gstats{ ' wins-deadlier ++ }
+		($ "Deadlier Road Mode completed" ..
+		gstats{ wins-deadlier } 1 > if
+			": " .. gstats{ wins-deadlier }
+		else
+			"!"
+		then $)
+	then
+
+	gstats{ save }
+	filesave{ save-global-stats }
+;
+
+: fin-script
+
+	filesave{ save-global-stats }
+	delete-the-game
+
+	create-mountie
+
+	0 stack
+	
+	modedefeated , 2 ,
+	($ "Total Zombie Kills: " .. road{ kills-this-game } $) , 2 ,
+	
+	FLASHY "DEATH ROAD TO CANADA" .. ,
+	($ "A game by " .. BLUE "Rocketcat Games & Madgarden" .. $) , 5 ,
+	
+	rndchar , "Sooooo... this is Canada eh" , 3 ,
+	solo if
+		char1 , "Guess I made it alone." , 3 ,
+	else	
+		char2 , "Yup." , 2 , 
+	then
+	
+	char1 , "It's a bit... brisk" , 2 ,
+	
+	solo if
+		char1 , "Oh, well." , 2 ,	
+	else
+		char2 , "Ya think?" , 3 ,
+	then
+
+// defeated and such
+	
+	5 for
+	' penguin , 0.2 0.5 frnd ,
+	next
+
+	rndchar , "Hey look! Penguins!!" ,
+
+	3 for
+	' penguin , 0.2 0.5 frnd ,
+	next
+
+	0.5 , canuck , "Wait what" , 2 ,
+	char1 , "What?" , 1 ,
+	canuck , "There are no penguins in Canada..." , 2 ,
+	char1 , "But... ice, snow... PENGUINS! " 0x e6 $chr $cat , 3 ,
+	canuck , "...sigh" , 1 ,
+	
+// Single credits
+
+	($ "Design: " .. BLUE "Kepa Auwae (Rocketcat Games)" .. $) , 2 ,
+	($ "Developer: " .. BLUE "Paul Pridham (Madgarden)" .. $) , 2 ,
+	($ "Artists: " .. BLUE "G.P. Lackey and 'Conzeit' Camilo Arturo" .. $) , 2 ,
+	($ "Musician: " .. BLUE "Joey Grady" .. $) , 5 ,
+
+	3 for
+	' penguin , 0.2 0.5 frnd ,
+	next
+
+	1 , char1 , "More penguins!" , 2 ,
+	canuck , "...sigh" , 1 ,
+
+	BLUE "THANK YOU FOR PLAYING!" .. ,	
+	FLASHY "DEATH ROAD TO CANADA" .. , 3 ,
+	BLUE "Try a different Gameplay Mode!" .. , 5 ,
+	
+;
+
+: the-end 20 1000 debug-tone 
+	' noop to main-event-road-periodic quit-to-title ( go back to title )
+;
+
+: end-road-handler locals( cmd )
+	begin
+
+		script-stack depths 0= if drop the-end then;
+
+		dequeues -> cmd <- cmd >type case
+			FORTH_USERTYPE_CHARACTER of dequeues <- cmd .blurbsay endof
+			FORTH_STRING of <- cmd blurbevent endof
+			FORTH_INT of <- cmd road-delay exit endof
+			FORTH_FLOAT of <- cmd road-delay exit endof
+			FORTH_WORDREF of <- cmd execute endof
+		endcase
+
+	again
+
+;
+
+: end-road-setup
+	0 vehicle.which!
+	4 road_theme!
+	to-road
+	-30 fade_to
+	create-mountie
+	fin-script to script-stack
+	1 60 / road-delay
+	' end-road-handler to main-event-road-periodic
+	16 1000 debug-tone
+	MUSIC_DEATHROAD $music-load
+;
+
+// THE END
+: death-road-finale
+	180 ' end-road-setup timer_add
+	180 fade_to
+	180 player .stun!
+;
+
+} 
+
+

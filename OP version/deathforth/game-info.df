@@ -1,0 +1,66 @@
+
+"SPLEEN " constant BRANCHNAME
+
+: branchcheck "Death Road " TEST_BRANCH if "TESTBRANCH " else BRANCHNAME then ;
+
+: specialthanks3
+	cyoa-start
+	"Special Thanks" cyoa-title!
+	$( "Special Thanks: " .. "Jetro K, Kelvin M, Britt S, Mikael B, Lorissa B, Marius W, Hinterland, Per Kristian B, Cybolt, Chankit P, Thomas S, Noel, Matthew C, Dalton H, Sean, Gary M, Richie B, Seth, Brando, Nick E, Fraser W, Mcmotu, Yousif A, Emerson G, Ben S, Dashiell S, Kerri C, Conatus Creative, Adrian A, Nick K, Richie191, Alex V, Luca F, Nerve Software, Ronald G, Ian M" bbold $) text!
+	choice( "THANKS EVERYONE!" )choice
+;
+
+: specialthanks2
+	cyoa-start
+	"Special Thanks" cyoa-title!
+	$( "Special Thanks: " .. "Smoochie Walrus, Thadeus 'ilikain' Dietzen, Keith Shepherd, LuiB, Cansin Akcasoy, Chris Lundin, Sir Baldhasir, Joshua Skelton, Matt Rix, AbdulAziz Al-Kaboor, James McEneely, Jeff Sulz, Hellblazer1138, Matt 'Zebe' Lee, Gustav Wedholm, Trace, James H, Kirbogon, Dustin Mierau" bbold $) text!
+	choice( "MORE... " )choice: specialthanks3
+;
+	
+: specialthanks
+	cyoa-start
+	"Special Thanks" cyoa-title!
+	($ "Death Road to Canada wouldn't have happened without all of our Kickstarter backers!
+	Special Thanks: " .. "MagicalTux" fbold .. " and " bbold .. "Kevin Clark" fbold .. "
+	Lena Cardell, Jonas Winje, Ahmed Al Mutawa
+	Sean R Parker, Asten Yeo, Black Pants Studio, Christopher Gauss, Arlin 'FeXd' Schaffel, Greg Matyola, Chris 'Rosuav' Angelico, Mr S Zegar, Christopher Wilson" bbold $) text!
+	choice( "MORE... " )choice: specialthanks2
+;
+
+: infocredits
+
+	cyoa-start
+	"Credits!" cyoa-title!
+	($ "Developer: " .. "Paul Pridham (Madgarden)" bbold .. "
+	Design: " .. "Kepa Auwae (Rocketcat Games)" bbold .. "
+	Artists: " .. "G.P. Lackey and 'Conzeit' Camilo Arturo" bbold .. "
+	Additional Art: " .. "Sven 'ptoing' Ruthner and Madgarden" bbold .. "
+	Musician: " .. "Joey Grady" bbold .. " 
+	Additional Support: " .. "P1XL Games, Don Thacker, Jon Auwae" bbold $) text!
+	
+	
+	choice( "Special Thanks" )choice: specialthanks
+;
+
+: gameinfo 
+
+cyoa-start
+"Death Road Information" cyoa-title!
+"Welcome to the Death Road to Canada!" text! BLUE 
+touch_controls@ 1 < if 
+	"Watch this space for news, or for discussion and update notes check out the Steam Announcement page: http://steamcommunity.com/app/252610
+	Constant news: www.twitter.com/rocketcatgames/" 
+else
+	"http://www.deathroadtocanada.com
+	Leave an App Store review if you enjoy this game!
+	Constant news: www.twitter.com/rocketcatgames/"
+then .. +crtext +cr
+
+PURPLE branchcheck pbold .. RED .. buildstamp .. +crtext
+
+choice( "OK" )choice
+choice( "CREDITS" )choice: infocredits
+
+;
+last to main-event-do-info
+

@@ -1,0 +1,139 @@
+uses base.df
+uses charfilt.df
+uses charstats.df
+uses road.df
+
+cyoa{ road{
+
+cyoa-choice: card-UGH
+	"COME ON" cyoa-text! ;
+cyoa: despair1
+	"Lost to Despair" cyoa-title!
+	saddest choosechar cicon // NOTE: change saddest to bully later if I want this to be more consistant
+	solo if 
+		($ cname .. ", in a haze of despair, doesn't notice a zombie stumbling around until it's nearly too late." $) cyoa-text! bitefx
+		despairbite
+	then;
+	($ cname .. " has lost all hope, and refuses to keep going. " .. cHe .. " wanders off to an unknown fate." $) cyoa-text! badfx
+		TEAM_STATUS_BAD_LEFT cchar .decruit
+;
+
+cyoa-choice: bully-kick
+($ cname .. " gets kicked out of the group instead of " .. vname .. ".
+" $) cyoa-text!
+50 %chance if
+		($ vname .. " smiles a little." $) +text
+		victim .morale++
+else
+		($ vname .. " shrugs." $) +text
+then
+TEAM_STATUS_BAD_LEFT cchar .decruit 0.5 600 tone
+;
+
+cyoa-choice: bully-all-kick
+team-count 2 = if	
+	($ notcname .. " recommends that " .. cname .. " leave, instead.
+	" $) cyoa-text!
+else
+	($ Thegroup .. " kicks " .. cname .. " out for being a dingus.
+	" $) cyoa-text!
+then
+70 %chance if
+	($ cname .. " storms off in a huff.
+	" $) +text 0.5 600 tone
+else
+	($ cname .. " says something along the lines of 'COME ON I WAS JUST JOKING HA HA'.
+	" .. cHe .. " still gets kicked out.
+	" $) +text 3 300 tone
+then 
+50 %chance if
+		($ notcname .. " smiles a little." $) +text
+		notcchar .morale++
+else
+		($ notcname .. " shrugs." $) +text
+then
+	TEAM_STATUS_BAD_LEFT cchar .decruit
+;
+
+cyoa-choice: victim-kick
+($ cname .. " was kicked from the group due to " .. bname .. ".
+" $) cyoa-text!
+($ bname .. " feels pretty smug about this." $)
++text bully .morale++
+TEAM_STATUS_BAD_LEFT cchar .decruit 0.5 600 tone
+;
+	
+cyoa: despair2
+	saddest to bully
+	bully choosechar cicon
+	solo if 
+		"Losing Strength" cyoa-title!
+		($ cname .. "'s body is affected by the stress of this hopeless situation." $) cyoa-text! badfx
+		strength-- fitness--
+	then;
+	"Everyone Needs to Hustle" cyoa-title!
+	($ cname .. " says that someone in the group isn't pulling their weight, and demands that they be kicked out.
+	Who should leave the group?" $) cyoa-text! 3 500 tone
+		' victim-kick bully cyoa-team-choice-except
+		bully charchoice( "" )choice: bully-all-kick 
+;
+
+cyoa: despair3
+	saddest to bully
+	bully choosechar cicon
+	solo if 
+		"Shaky Hands" cyoa-title!
+		($ cname .. ", alone and despairing, starts to get shaky hands from the stress." $) cyoa-text! badfx
+		medical-- shooting-- mechanic--
+	then;
+	notcchar to victim
+	"Ultimatum" cyoa-title!
+	($ cname .. " demands that either " .. vname .. " leaves, or " .. cname .. " does." $) cyoa-text! 3 500 tone
+		victim charchoice( " gets kicked out" )choice: victim-kick
+		bully charchoice( " gets kicked out" )choice: bully-kick		
+;
+
+cyoa: despair4
+	saddest to bully
+	bully choosechar cicon
+	solo if 
+		"Leg Bite" cyoa-title!
+		($ "Distracted and alone, " .. cname .. " is caught by a crawling zombie while wandering a ruined town." $) cyoa-text! bitefx
+		fitness-- cchar team-attacked
+	then;
+	notcchar to victim
+	"Quietly Disappearing" cyoa-title!
+	($ cname .. " sneaks off when " .. theothersare .. " busy.
+	" $) cyoa-text! badfx TEAM_STATUS_BAD_LEFT cchar .decruit
+	cloyalty- if 
+		($ cname .. ", a true weasel, stole as much food as possible before leaving. " $) +text
+		most-paranoid if choosechar
+			($ "However, " .. cname .. " sensed something was off, followed " .. bname .. ", and got the food back quickly." $) +text witsREV attitudeREV
+		then;
+		trunk-food 0 = if
+			($ "Too bad for " .. bname .. " that there wasn't any food, anyway." $) +text victim .morale++
+		then;
+		trunk-food 15 < if
+			($ "What little the group had was stolen." $) +text eat-all
+		then;
+		($ "The thief took all " .. bully xhe .. " could carry." $) +text -15 LOOT_FOOD trunk.loot+
+	else
+		($ cname .. " disappears without a trace." $) +text
+	then
+;
+
+// Uncomment the below as you want, to overwrite the hotkeys from cyoa-example-7types
+
+ ' despair1 1 hotkey!
+ ' despair2 2 hotkey!
+ ' despair3 3 hotkey!
+ ' despair4 4 hotkey!
+// ' card7-cyoa 5 hotkey!
+ ' card7-cyoa 6 hotkey!
+// ' goodfx 7 hotkey!
+// ' card-deleteme 8 hotkey!
+' goodfx 9 hotkey!
+
+} }
+
+

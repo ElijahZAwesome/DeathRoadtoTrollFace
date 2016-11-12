@@ -1,0 +1,18 @@
+
+cyoa{ road{
+
+// Lab Office
+
+cyoa: rare2-draculagrave
+	"Spooky Graveyard" cyoa-title!
+	($ Thegroup .. " drives past a graveyard. There's not many zombies there, yet it feels " .. "ominous to a cartoonish extent" rbold .. ". Faintly, off to the north, spooky goblin laughter can be heard." $) cyoa-text! 3 500 tone
+	1.7 25 0 1 rnd zforecast
+	"events/rareloc/cemetery.df" $load-region
+		choice( "Search for Goblin" )choice: premission
+		gas-draw
+;
+
+} }
+
+
+

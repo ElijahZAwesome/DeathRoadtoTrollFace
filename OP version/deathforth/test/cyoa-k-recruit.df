@@ -1,0 +1,261 @@
+uses base.df
+uses charfilt.df
+uses charstats.df
+uses road.df
+
+cyoa{ road{
+
+cyoa-choice: recruit1-yes
+	team-count 3 > if
+	($ "YOU GOT LIKE A BILLION PEOPLE.
+	GO AWAY.
+	The door stays shut, the voice says nothing more, and " .. thegroup .. " leaves." $) cyoa-text!	badfx
+	then;
+	recruitee character# cyoa-char-icon!
+	($ "The door opens and " .. rname .. " comes out." $) cyoa-text! 2 300 tone
+		recruited
+;
+cyoa-choice: recruit1-no 
+	($ "YOU ARE AN ESPECIALLY HUGE DINK. 
+	YOU DINK.
+	" .. cname .. " is infuriated and smashes on the door for awhile. " .. Thegroup .. " ends up leaving shortly after." $) cyoa-text! goodfx morale-- temper--
+;
+
+cyoa: recruit1
+	"The Dinkdoor: Door of Dinks" cyoa-title!
+	someone choosechar
+	char-gen to recruitee
+	0 2 rnd recruitee .attitude!
+	0 2 rnd recruitee .wits!
+	($ Thegroup .. " comes across a house by the road. It's locked.
+	While trying to smash the door down, a voice calls out:
+	HEY LEAVE MY DOOR ALONE YOU DINKS" $) cyoa-text! 3 500 tone
+		choice( "Try to Recruit" )choice: recruit1-yes
+		cchar charchoice( ": I'M NOT A DINK" )choice: recruit1-no
+;
+
+cyoa-choice: recruit2-yes
+	recruitee character# cyoa-char-icon!
+	team-count 3 > if
+		($ rname .. " says that there are too many people in your car already, and that " .. rhe .. "'ll be fine staying put for awhile longer.
+		" .. Thegroup .. " leaves " .. rname .. " behind." $) cyoa-text!
+	then;
+	($ "SURE I'LL JOIN, I WAS RUNNING OUT OF FOOD ANYWAY.
+	" .. rname .. " is now part of the team!
+	" .. rname .. " brings along some food supplies! Bonus!
+	Onward to Canada!" $) cyoa-text! 2 300 tone
+	6 LOOT_FOOD trunk.loot+ recruitee .recruit
+;
+
+cyoa-choice: recruit2-rob
+	solo if
+	($ cname .. " robs " .. rname .. ".
+	This is probably why your group has just one person in it." $) cyoa-text!
+	else
+	($ cname .. " convinces the group to rob " .. rname .. "." $) cyoa-text!
+	cchar ' .morale-- foreach-team-char-except
+	cchar ' .loyalty-- foreach-team-char-except
+	then
+	6 LOOT_FOOD trunk.loot+ loyaltyREV badfx
+;
+
+cyoa: recruit2
+	"Grocery Squatter" cyoa-title!
+	char-gen to recruitee
+	recruitee character# cyoa-char-icon!
+	($ Thegroup .. " is about to break into a small, fortified grocery store, but then finds " .. rname .. " already living inside!" $) cyoa-text! 3 500 tone
+		choice( "Ask " .. rname .. " to join" )choice: recruit2-yes
+		choice( "Leave " .. rname .. " alone" )choice
+		weaselest-pass if
+			weaselest charchoice( ": Let's rob this dingus!" )choice: recruit2-rob
+		then
+;
+
+cyoa: recruit3
+	"Kinda Pushy" cyoa-title!
+	char-gen to recruitee
+	recruitee character# cyoa-char-icon!
+	0 2 rnd recruitee .temperament!
+	4 6 rnd recruitee .attitude!
+	($ Thegroup .. " finds another traveller by the roadside, named " .. rname .. ".
+	" .. rHe .. " insists on joining the group, immediately.
+	" $) cyoa-text! 3 500 tone
+	team-count 4 < if
+		($ Thegroup .. " isn't even given a choice. " .. rname .. " joins the party!
+		Onward to Canada?" $) +text
+		recruitee .recruit
+	then;
+		"The group avoids having to get this person, as the car is full anyway." +text
+;
+
+// Possible stat bonus recruit events
+
+: recruit-intro
+	char-gen to recruitee ricon
+	($ Thegroup .. " find a new person, " .. rname .. ".
+	" .. rHe .. " is alone, and wants to join the team!" $) cyoa-text! 3 500 tone
+;
+
+: recruit-scoff
+	($ cname .. 
+	1 6 rnd case
+		1 of " seriously doubts this." endof
+		2 of " rolls " .. chis .. " eyes at this obvious lie." endof
+		3 of " thinks that " .. rhe .. " is lying." endof
+		4 of " has a really bad feeling about this person." endof
+		5 of " has a gut feeling that this is a lie." endof
+		6 of " knows that something is off about " .. rname .. "." endof
+	endcase
+	$) +crtext
+;
+
+: recruit-strength-flavor
+	1 6 rnd case
+		1 of " flexes in a dramatic way to prove it." endof
+		2 of " talks about a past life as a lumberjack." endof
+		3 of " talks about a former life as a bodybuilder." endof
+		4 of " boasts about being a former 'caged pit deathmatch' fighter." endof
+		5 of " bends a spoon, really aggressively." endof
+		6 of " flexes and grunts HARD, beads of sweat forming on forehead." endof
+	endcase
+;
+
+: recruit-fitness-flavor
+	1 6 rnd case
+		1 of " reveals that they were a track star in college." endof
+		2 of " does a really clumsy half-cartwheel. Maybe it's an off day for " .. rhim .. "?" endof
+		3 of " shows off an elaborate stretching routine to prove it." endof
+		4 of " jogs in place for a bit. It looks ok? There's little to no wheezing..." endof
+		5 of " does a quick little dance. Then " .. rname .. " stops, saying to recruit " .. rhim .. " for more." endof
+		6 of " boasts about how " .. rhe .. " used to be an olympic athlete." endof
+	endcase
+;
+
+: recruit-shooting-flavor
+	1 6 rnd case
+		1 of " talks about " .. rhis .. " favorite guns, though it's worrying that " .. rhe .. " pronounces 'guns' wrong." endof
+		2 of " talks about a past life as a police officer. 'Not just any cop, a supercop'." endof
+		3 of " talks about all " .. rhis .. " shooting trophies and trophies for best guns." endof
+		4 of " refuses to prove " .. rhe .. "'s a good shot because " .. rhis .. " finger hurts right now. Suspicious." endof
+		5 of " twirls a pistol around, before accidentally dropping and breaking it." endof
+		6 of " shoots a rubber band off " .. rhis .. " finger to show off " .. rhis .. " aim, but misses." endof
+	endcase
+;
+
+: recruit-medical-flavor
+	1 6 rnd case
+		1 of " spouts a bunch of medicalish jargon. Seems plausible?" endof
+		2 of " is really evasive when asked what " .. rhis .. " practice was." endof
+		3 of " nearly admits that " .. rhe .. " wasn't a 'doctor-doctor', but catches " .. rhim .. "self." endof
+		4 of " talks about " .. rhis .. " long career in healthcare." endof
+		5 of " says that " .. rhe .. " never had a degree, but learned a lot 'on the streets'." endof
+		6 of " twirls a scalpel around like an expert, but then drops it into a storm drain." endof
+	endcase
+;
+
+: recruit-mechanical-flavor
+	1 6 rnd case
+		1 of " discusses car repair, but its hard to tell if " .. rhe .. "'s bluffing or not." endof
+		2 of " talks about how " .. rhe .. " used to own a repair shop." endof
+		3 of " says " .. rhe .. " used to be an engineer, but is evasive about what kind." endof
+		4 of " drones on about " .. rhis .. " lifelong passion for cars." endof
+		5 of " promises that if something breaks, " .. rhe .. " can fix it!" endof
+		6 of " smells like car oil, but maybe that's just poor hygiene." endof
+	endcase
+;
+
+: recruit-highstat 80 %chance if 4 else 5 then recruitee ;
+: recruit-liestat 0 1 rnd recruitee .loyalty! 0 2 rnd recruitee ;
+		
+
+cyoa: recruit-strength
+	"Strong Stranger" cyoa-title!
+	recruit-intro
+	($ rname .. " claims to be really strong. " .. rHe .. recruit-strength-flavor $) +crtext
+	60 %chance if
+		recruit-highstat .strength!
+	else
+		recruit-liestat .strength!
+		strongest-pass if strongest choosechar recruit-scoff then
+	then
+	recruit-yesno
+;
+
+cyoa: recruit-fitness
+	"Recruitment of the Fittest" cyoa-title!
+	recruit-intro
+	($ rname .. " claims to be very physically fit. " .. rHe .. recruit-fitness-flavor $) +crtext
+	60 %chance if
+		recruit-highstat .fitness!
+	else
+		recruit-liestat .fitness!
+		fittest-pass if fittest choosechar recruit-scoff then
+	then
+	recruit-yesno
+;
+cyoa: recruit-shooting
+	"A New Gun in Town" cyoa-title!
+	recruit-intro
+	($ rname .. " claims to be a great shot with a gun. " .. rHe .. recruit-shooting-flavor $) +crtext
+	50 %chance if
+		recruit-highstat .shooting!
+	else
+		recruit-liestat .shooting!
+		shootest-pass if shootest choosechar recruit-scoff then
+	then
+	recruit-yesno
+;
+cyoa: recruit-medical
+	"Medical Assistance" cyoa-title!
+	recruit-intro
+	($ rname .. " claims to be experienced in medical matters. " .. rHe .. recruit-medical-flavor $) +crtext
+	50 %chance if
+		recruit-highstat .medical!
+	else
+		recruit-liestat .medical!
+		medicalest-pass if medicalest choosechar recruit-scoff then
+	then
+	recruit-yesno
+;
+cyoa: recruit-mechanical
+	"Medical Assistance" cyoa-title!
+	recruit-intro
+	($ rname .. " claims to be great at fixing cars and machinery. " .. rHe .. recruit-mechanical-flavor $) +crtext
+	50 %chance if
+		recruit-highstat .mechanical!
+	else
+		recruit-liestat .mechanical!
+		mechanicest-pass if mechanicest choosechar recruit-scoff then
+	then
+	recruit-yesno
+;
+
+cyoa: recruit-dog-feed
+	ricon trunk-food 2 < if
+		"There wasn't enough food to spare for the dog.
+		It runs away when approached."  cyoa-text! badfx
+	then;
+	($ Thegroup .. " lures " .. rname .. " over with food. " .. rHe .. " knows a good source of meals when " .. rhe .. " sees it, and decides to stick around. " $) cyoa-text! 2 300 tone
+	-2 trunk-food+
+	team-count 3 > if
+		($ "The group is full.
+		Who would you like to replace to make room for " .. rname .. "?" $) +crtext
+			' recruit-replace 3 #cyoa-team-choice
+			choice( "Leave " .. rname .. " behind" )choice
+	then;
+		recruited
+;
+
+cyoa: recruit-dog
+	"Dog Recruitment" cyoa-title!
+	char-gen to recruitee ricon
+	recruitee .doggify
+	($ "There is a dog wandering nearby. It's keeping its distance, but watching " .. thegroup .. " with guarded interest.
+	It's become rare to see a dog that trusts people." $) cyoa-text! 3 500 tone
+		choice( "Feed the dog 2 cans of food" )choice: recruit-dog-feed
+		choice( "Leave the dog alone" )choice
+;
+
+} }
+
+

@@ -1,0 +1,236 @@
+uses base.df
+uses charfilt.df
+uses charstats.df
+uses road.df
+uses decks.df
+
+uses charblurb.df
+
+events{ road{
+
+0 value blurbslot
+0 var blurbchars
+
+uses test/blurb/screply.df
+
+uses test/demo-flava-blurbz.df
+uses test/blurb/sc/mason.df
+uses test/blurb/sc/santa.df
+uses test/blurb/sc/evilsanta.df
+uses test/blurb/sc/tlb.df
+uses test/blurb/sc/alvis.df
+uses test/blurb/sc/lnk.df
+uses test/blurb/sc/wrestler.df
+uses test/blurb/sc/grf.df
+uses test/blurb/sc/boxer.df
+uses test/blurb/sc/catlady.df
+uses test/blurb/sc/madsci.df
+uses test/blurb/sc/dog.df
+uses test/blurb/sc/turkey.df
+uses test/blurb/sc/knight.df
+uses test/blurb/sc/anime.df
+uses test/blurb/sc/gnomey.df
+uses test/blurb/sc/clown.df
+uses test/blurb/sc/ninja.df
+uses test/blurb/sc/horse.df
+uses test/blurb/sc/dsyp.df
+uses test/blurb/sc/billy.df
+uses test/blurb/sc/octodad.df
+
+uses test/blurb/blurbdeck.df
+uses test/blurb/dull.df
+uses test/blurb/sharp.df
+uses test/blurb/optimist.df
+uses test/blurb/pessimist.df
+uses test/blurb/aggressive.df
+uses test/blurb/passive.df
+
+BLURB-DECK shuffles to blurb-deck
+ONE-LINERS shuffles to one-liners
+
+BLURB-SANTA-DECK shuffles to blurb-santa-deck
+BLURB-EVILSANTA-DECK shuffles to blurb-evilsanta-deck
+BLURB-TLB-DECK shuffles to blurb-tlb-deck
+BLURB-ALVIS-DECK shuffles to blurb-alvis-deck
+BLURB-LNK-DECK shuffles to blurb-lnk-deck
+BLURB-WRESTLER-DECK shuffles to blurb-wrestler-deck
+
+defer blurbcard
+
+: scblurblogic
+	1st-st 1 = if
+		blurb-mason-deck depths 0= if BLURB-MASON-DECK shuffles to blurb-mason-deck then 
+		blurb-mason-deck
+	then;
+	1st-st 3 = if
+		blurb-santa-deck depths 0= if // reshuffle deck if out
+			BLURB-SANTA-DECK shuffles to blurb-santa-deck 
+		then 
+		blurb-santa-deck-sad depths 0= if 
+			BLURB-SANTA-DECK-SAD shuffles to blurb-santa-deck-sad 
+		then
+		1st-char .morale@ 3 < if blurb-santa-deck-sad then; 
+		blurb-santa-deck
+	then;
+	1st-st 4 = if
+		blurb-evilsanta-deck depths 0= if BLURB-EVILSANTA-DECK shuffles to blurb-evilsanta-deck then 
+		blurb-evilsanta-deck
+	then;
+	1st-st 5 = if
+		blurb-octodad-deck depths 0= if BLURB-OCTODAD-DECK shuffles to blurb-octodad-deck then 
+		blurb-octodad-deck
+	then;
+	1st-st 8 = 50 %chance and if
+		blurb-wrestler-deck depths 0= if BLURB-WRESTLER-DECK shuffles to blurb-wrestler-deck then 
+		blurb-wrestler-deck
+	then;
+	1st-st 9 = if
+		blurb-boxer-deck depths 0= if BLURB-BOXER-DECK shuffles to blurb-boxer-deck then 
+		blurb-boxer-deck
+	then;
+	1st-st 10 = if
+		blurb-madsci-deck depths 0= if BLURB-MADSCI-DECK shuffles to blurb-madsci-deck then 
+		blurb-madsci-deck
+	then;
+	1st-st 11 = if
+		blurb-catlady-deck depths 0= if BLURB-CATLADY-DECK shuffles to blurb-catlady-deck then 
+		blurb-catlady-deck
+	then;
+	1st-st 15 = if
+		blurb-ninja-deck depths 0= if BLURB-NINJA-DECK shuffles to blurb-ninja-deck then 
+		blurb-ninja-deck
+	then;
+	1st-st 22 = if
+		blurb-dog-deck depths 0= if BLURB-DOG-DECK shuffles to blurb-dog-deck then 
+		blurb-dog-deck
+	then;
+	1st-st 25 = if
+		blurb-tlb-deck depths 0= if BLURB-TLB-DECK shuffles to blurb-tlb-deck then 
+		blurb-tlb-deck
+	then;
+	1st-st 27 = if
+		blurb-turkey-deck depths 0= if BLURB-TURKEY-DECK shuffles to blurb-turkey-deck then 
+		blurb-turkey-deck
+	then;
+	1st-st 29 = if
+		blurb-clown-deck depths 0= if BLURB-CLOWN-DECK shuffles to blurb-clown-deck then 
+		blurb-clown-deck
+	then;
+	1st-st 31 = if
+		blurb-grf-deck depths 0= if BLURB-GRF-DECK shuffles to blurb-grf-deck then 
+		blurb-grf-deck
+	then;
+	1st-st 33 = if
+		blurb-gnomey-deck depths 0= if BLURB-GNOMEY-DECK shuffles to blurb-gnomey-deck then 
+		blurb-gnomey-deck
+	then;
+	1st-st 34 = if
+		blurb-horse-deck depths 0= if BLURB-HORSE-DECK shuffles to blurb-horse-deck then 
+		blurb-horse-deck
+	then;
+	1st-st 36 = 1st-st 37 = or if // could also have used dup 36 swap 37
+		blurb-alvis-deck depths 0= if BLURB-ALVIS-DECK shuffles to blurb-alvis-deck then 
+		blurb-alvis-deck
+	then;
+	1st-st 52 = if
+		blurb-lnk-deck depths 0= if BLURB-LNK-DECK shuffles to blurb-lnk-deck then 
+		blurb-lnk-deck
+	then;
+	1st-st 53 = if
+		blurb-knight-deck depths 0= if BLURB-KNIGHT-DECK shuffles to blurb-knight-deck then 
+		blurb-knight-deck
+	then;
+	1st-st 58 = if
+		blurb-dsyp-deck depths 0= if BLURB-DSYP-DECK shuffles to blurb-dsyp-deck then 
+		blurb-dsyp-deck
+	then;
+	1st-st 59 = if
+		blurb-billy-deck depths 0= if BLURB-BILLY-DECK shuffles to blurb-billy-deck then 
+		blurb-billy-deck
+	then;
+	1st-st 62 = 1st-st 63 = 1st-st 64 = or or if // change later to be 62 to 64, add new 65 list
+		blurb-anime-deck depths 0= if BLURB-ANIME-DECK shuffles to blurb-anime-deck then 
+		blurb-anime-deck
+	then;
+	blurb-deck 
+;
+
+: blurblogic 
+	
+	cwits+ if 
+		blurb-deck-sharp depths 0= if BLURB-DECK-SHARP shuffles to blurb-deck-sharp then 
+		blurb-deck-sharp 
+	then;
+
+	cwits- if
+		blurb-deck-dull depths 0= if BLURB-DECK-DULL shuffles to blurb-deck-dull then 
+		blurb-deck-dull 
+	then;
+	
+	cattitude+ if 
+		blurb-deck-optimist depths 0= if BLURB-DECK-OPTIMIST shuffles to blurb-deck-optimist then 
+		blurb-deck-optimist
+	then;
+	
+	cattitude- if
+		blurb-deck-pessimist depths 0= if BLURB-DECK-PESSIMIST shuffles to blurb-deck-pessimist then 
+		blurb-deck-pessimist
+	then;
+	
+	ctemper+ if 
+		blurb-deck-passive depths 0= if BLURB-DECK-PASSIVE shuffles to blurb-deck-passive then 
+		blurb-deck-passive 
+	then;
+	
+	ctemper- if
+		blurb-deck-aggressive depths 0= if BLURB-DECK-AGGRESSIVE shuffles to blurb-deck-aggressive then 
+		blurb-deck-aggressive 
+	then;
+	
+	blurb-deck depths 0= if BLURB-DECK shuffles to blurb-deck then 
+		blurb-deck
+
+;
+
+: bstart
+
+	team-stack shuffles to blurbchars
+
+	0 to blurbslot		// Which character slot from seeded shuffled team ordering
+	
+// Temporarily out below to replace with specific blurbs - start on line below
+
+	1st-char choosechar
+	1st-st 0 > if
+		scblurblogic
+	else
+		blurblogic
+	then
+	
+	pops to blurbcard	// Just one card per conversation
+
+// end commenting on line above
+	// Here's a loop to count through all of the team characters
+	team-count for
+
+		blurbslot select-me
+		blurbcard // referenced popped card
+// Insert blurb card below and comment line above this one
+	// snare-trap
+	// useful-info
+		// tab over if not the first-picked char
+		0 tab blurbslot if 1 tab then
+
+		// Increment using fancy new ++ word
+		' blurbslot ++
+	next
+
+	// Calculate the total time to wait for next event,
+	// based on the blurb text amount
+	use-textwait-period
+
+;
+
+} }
+
+

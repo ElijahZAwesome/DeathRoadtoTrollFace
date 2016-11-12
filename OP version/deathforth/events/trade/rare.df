@@ -1,0 +1,140 @@
+cyoa{ regiondef{
+
+// Witch and Cauldron
+
+: black-cat
+
+	// Black cat
+	new-npc lt .character@ .catify
+	8 lt .character@ .bodytype!
+	lt .character@ .default-ai-setup
+;
+
+: .my-cat-thing .user.ival@ #thing ;
+
+: .get-black-cat args( chara )
+
+	black-cat
+
+	// Store the cat's THINGID for the witch
+	lt thing# <- chara .user.ival!
+
+	// Store the witch's THINGID for the cat
+//	<- chara .thing@ thing# lt <- chara .user.ival!
+;
+
+: witch-done
+	($ "The witch cackles and then tells " .. thegroup .. " to go away." $) +crtext clear-cyoa
+;
+
+: charm-witch
+	most-charming if
+		choosechar ($ " The witch gives " .. cname .. " a free Witch's Broom.
+		" .. "MAYBE YOU CAN BE A WITCH SOMEDAY! *CACKLING*" pbold $) 
+		+cr +text 1 WEAPON_WITCH trunk.weapon+ cicon
+	then
+;
+
+cyoa-bridge: trade-witch-20
+	($ Thegroup .. " bribes the witch into joining the team!
+	" .. "CAN I BRING MY CAULDRON WITH ME?" pbold $) cyoa-text! 3 500 tone
+	-20 trunk-food+
+	clear-cyoa cchar to recruitee
+	team-full? if
+		($ "The group is full.
+		Who would you like to replace to make room for the witch?" $) +crtext
+		' recruit-replace cyoa-team-choice
+	else
+		recruited
+	then
+
+	charm-witch
+;
+
+: trade-witch-roll 
+	dup .cwits+ if .morale-- else .morale3+ then 
+;
+
+cyoa-bridge: trade-witch-10
+	($ Thegroup .. " buys a BLACK CAT...
+	" .. "WELL, I THINK YOU CAN HANDLE HAVING A PET!" pbold $) cyoa-text! 3 500 tone
+
+	interactee .character@ .s cr .my-cat-thing .character@ to recruitee
+
+	ricon
+
+	-13 trunk-food+ ricon
+	witch-done
+	team-full? if
+		($ "The group is full.
+		Who would you like to replace to make room for the black cat?" $) +crtext
+		' recruit-replace cyoa-team-choice
+	else
+		recruited
+	then
+	charm-witch
+;
+
+cyoa-choice: trade-witch-5
+	($ Thegroup .. " buys a Witch's Broom!
+	" .. "THIS BROOM HAS BEEN INFUSED WITH THE POWER OF BLACK MAGIC, SO IT SWEEPS TWICE AS GOOD AS A NORMAL BROOM!" pbold $) cyoa-text! 3 500 tone
+	1 WEAPON_WITCH trunk.weapon+ -5 trunk-food+
+	witch-done
+;
+
+cyoa-choice: trade-witch-1
+	($ pname .. " asks the witch about her cauldron.
+	" .. "YOU CAN DRINK FROM IT IF YOU WANT! IT'S VERY POISONOUS." pbold $) cyoa-text! 3 500 tone
+	witch-done
+;
+
+cyoa-choice: trade-witch-coolit
+	cpet? if
+		($ cname .. " emits a big fart against the witch's cauldron." $)
+	else
+		($ cname .. " tells the witch trader to " .. "COOL IT. 
+	ALSO, NICE CAULDRON! NOT!" pbold $) then cyoa-text!
+	cool-it++
+		($ "The witch seizes " .. cname .. ".
+		" .. "MAKE FUN OF THE WITCH'S BREW?
+			GET THROWN IN THE WITCH'S STEW!!" rbold $) badfx +crtext 
+		($ "The witch throws " .. chim .. " in the cauldron!" $) +crtext
+		cpet? if
+			($ cname .. " is completely engulfed in poisonous stew! Yum!" $) +crtext
+			cchar .sting2-
+			cchar .morale2+
+			cchar .vitality++
+		else
+			($ cname .. " - MAX HEALTH REDUCED TO 1" rbold $) +crtext
+			cchar .skelbody
+			cchar .morale2-
+			cchar .dexterity++
+		then
+			attitudeREV witsREV trade-flee
+;
+
+cyoa: trade-rare-witch
+	"The Witch and the Cauldron" cyoa-title!
+	nearest .character@ choosechar cicon
+	($ "You're disturbing this witch from doing witch activities.
+	" .. "YOU CAN BOTHER ME ONCE AND ONLY ONCE, I'M BUSY WITH MY WITCH ACTIVITIES!" pbold $) cyoa-text! 3 500 tone foodamt
+	choice( "Keep quiet for now" )choice
+	most-grating if 
+		charchoice( " tells her to COOL IT" fcoolit )choice: trade-witch-coolit
+	then
+	trunk-food 5 < if
+		choice( "Ask about Cauldron" )choice: trade-witch-1
+	else
+		trunk-food 19 > if
+			choice( "Recruit Witch for 20 food" )choice: trade-witch-20
+		then
+		trunk-food 12 > if
+			choice( "Black Cat for 13 food" )choice: trade-witch-10
+		then
+		trunk-food 4 > if
+			choice( "Witch's Broom for 5 food" )choice: trade-witch-5
+		then
+	then
+;
+
+} } 

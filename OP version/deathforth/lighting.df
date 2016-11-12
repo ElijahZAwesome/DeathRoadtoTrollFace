@@ -1,0 +1,74 @@
+
+// Debug brightening up word
+: dbright 1 light_mode! 1 1 1 tint_near! 1 1 1 tint_far! 1000 gloom_lighting! ;
+
+: timelight-reset
+	timelight_clear
+	0 light_mode!
+	15 gloom_lighting!
+;
+
+: tl-default
+	timelight-reset
+
+	5 timelight_select
+		0 1 1 timelight_near!
+		0 0 1 timelight_far!
+	6 timelight_select
+		1 0 1 timelight_near!
+		0 0 1 timelight_far!
+	7  timelight_select
+		1 1 0 timelight_near!
+		 1 0 0 timelight_far!
+	10 timelight_select
+		1 1 1 timelight_near!
+		0.25 0.25 1 timelight_far!
+	12 timelight_select
+		1 1 1 timelight_near!
+		0.5 0.5 1 timelight_far!
+	17 timelight_select
+		1 1 0.5 timelight_near!
+		1 1 0.5 timelight_far!
+	19 timelight_select
+		1 0.5 0.5 timelight_near!
+		1 0 0 timelight_far!
+	20 timelight_select
+		1 0 1 timelight_near!
+		0.5 0 1 timelight_far!
+	21 timelight_select
+		0 1 1 timelight_near!
+		0 0 1 timelight_far!
+;
+
+
+: timelight-florida-setup
+	timelight-reset
+
+	0 timelight_select
+		0 1 1 timelight_near!
+		1 0 1 timelight_far!
+	3 timelight_select
+		0 1 1 timelight_near!
+		1 0 1 timelight_far!
+	5 timelight_select
+		0 1 1 timelight_near!
+		1 0 1 timelight_far!
+	6 timelight_select
+		1 0 1 timelight_near!
+		0 0 1 timelight_far!
+	7  timelight_select
+		1 1 0 timelight_near!
+		 1 0 0 timelight_far!
+	10 timelight_select
+		1 1 1 timelight_near!
+		0.5 0.5 1 timelight_far!
+	12 timelight_select
+		1 1 1 timelight_near!
+		0.5 0.75 1 timelight_far!
+//	17 timelight_select
+		1 0.75 0 timelight_near!
+//		1 0 1 timelight_far!
+	21 timelight_select
+		1 0 1 timelight_near!
+		1 0 1 timelight_far!
+;

@@ -1,0 +1,300 @@
+"../deathforth/rooms/city.txt" $load-rooms
+// "../deathforth/rooms/office.txt" $add-rooms
+// "../deathforth/rooms/shop.txt" $add-rooms
+// "../deathforth/rooms/restroom.txt" $add-rooms
+
+cyoa{
+
+cyoa: rangerp
+	nearestget nearest .character@ to rangerp
+	rangerp choosechar cicon
+	dead? if npc-died then;
+	"Danger Ranger: Pink" cyoa-title!
+	($ cname .. " says " .. che .. " is glad " .. pname .. " showed up. 
+	She assumes a martial arts stance!" $) cyoa-text!
+		road{ ' rangerrescue to post-mission-cyoa }
+;
+
+cyoa: rangero
+	nearestget nearest .character@ to rangero
+	rangero choosechar cicon
+	dead? if npc-died then;
+	"Danger Ranger: Orange" cyoa-title!
+	($ cname .. " says " .. che .. " needs to get back to her team.
+	She does a fancy kick to emphasize her sentence, and loses a shoe." $) cyoa-text!
+		road{ ' rangerrescue to post-mission-cyoa }
+;
+
+cyoa: rangerg
+	nearestget nearest .character@ to rangerg
+	rangerg choosechar cicon
+	dead? if npc-died then;
+	"Danger Ranger: Green" cyoa-title!
+	($ cname .. " says " .. che .. " could use some help! 
+	He cracks his knuckles and starts following." $) cyoa-text!
+		road{ ' rangerrescue to post-mission-cyoa }
+;
+
+cyoa: rangerb
+	nearestget nearest .character@ to rangerb
+	rangerb choosechar cicon
+	dead? if npc-died then;
+	"Danger Ranger: Blue" cyoa-title!
+	($ cname .. " says " .. che .. " got separated from his team. 
+	He does a few little poses for no good reason." $) cyoa-text!
+		road{ ' rangerrescue to post-mission-cyoa }
+;
+
+}
+
+: .rangerp
+	41 over .specialtype!
+	4 over .strength!
+	4 over .fitness!
+	1 over .female!
+	"Pink" over .name!
+	WEAPON_KUNG over .weapon_default!
+	dup cyoa{ ' rangerp cyoa! } drop
+;
+
+: .rangero
+	42 over .specialtype!
+	4 over .strength!
+	6 over .fitness!
+	1 over .female!
+	"Orange" over .name!
+	WEAPON_KARATE over .weapon_default!
+	dup cyoa{ ' rangero cyoa! } drop
+;
+
+: .rangerg
+	43 over .specialtype!
+	6 over .strength!
+	3 over .fitness!
+	0 over .female!
+	"Green" over .name!
+	WEAPON_SUMO over .weapon_default!
+	dup cyoa{ ' rangerg cyoa! } drop
+;
+
+: .rangerb
+	44 over .specialtype!
+	5 over .strength!
+	5 over .fitness!
+	0 over .female!
+	"Blue" over .name!
+	WEAPON_BOXING over .weapon_default!
+	dup cyoa{ ' rangerb cyoa! } drop
+;
+
+: rangerp map{ selected } . cr new-npc@ .rangerp 1 lt .unseen! drop ;
+: rangero map{ selected } . cr new-npc@ .rangero 1 lt .unseen! drop ;
+: rangerg map{ selected } . cr new-npc@ .rangerg 1 lt .unseen! drop ;
+: rangerb map{ selected } . cr new-npc@ .rangerb 1 lt .unseen! drop ;
+
+locdef{
+
+location
+		tags: trashed
+		max-rooms: 1
+		entry-tags: trashed
+		script: set-theme-house
+		pre-script: set-theme-house
+		
+		room-choice: trashed
+			room-weight: 10
+			room-count: 1
+			room-script: nad
+			filter-only
+			
+location
+		tags: rangerp-house
+		max-rooms: 5
+		entry-tags: open1
+		script: set-theme-house
+		pre-script: set-theme-house
+		
+		: rangerstart
+			random-door "hall" only-with-door
+			random-door "hall" only-with-door
+			random-door "trashed" only-with-door
+			10diff %zombs
+		;
+		
+		: rangerhall
+			random-door "bedroom" only-with-door
+			random-door "bedroom" only-with-door
+			random-door "trashed" only-with-door
+		;
+	"
+		room-choice: open1
+			room-weight: 10
+			room-count: 1
+			room-script: nad
+			room-post-script: rangerstart 
+			filter-only
+		
+		room-choice: hall
+			room-weight: 10
+			room-count: 1
+			room-script: nad
+			room-post-script: rangerhall
+			filter-only
+			
+		room-choice: trashed
+			room-weight: 10
+			room-count: 2
+			room-script: nad
+			filter-only
+			
+	"
+		constant rangerhouse
+		rangerhouse evaluate
+		
+		room-choice: bedroom
+			room-weight: 100
+			room-count: 1
+			room-script: nad
+			room-post-script: rangerp
+			filter-only
+
+location
+	tags: rangero-house
+		max-rooms: 6
+		entry-tags: open1
+		script: set-theme-house
+		pre-script: set-theme-house
+		
+		rangerhouse evaluate
+		
+		room-choice: bedroom
+			room-weight: 100
+			room-count: 1
+			room-script: nad
+			room-post-script: rangero
+			filter-only
+
+location			
+	tags: rangerg-house
+		max-rooms: 6
+		entry-tags: open1
+		script: set-theme-house
+		pre-script: set-theme-house
+		
+		rangerhouse evaluate
+		
+		room-choice: bedroom
+			room-weight: 100
+			room-count: 1
+			room-script: nad
+			room-post-script: rangerg
+			filter-only
+
+location			
+	tags: rangerb-house
+		max-rooms: 6
+		entry-tags: open1
+		script: set-theme-house
+		pre-script: set-theme-house
+		
+		rangerhouse evaluate
+		
+		room-choice: bedroom
+			room-weight: 100
+			room-count: 1
+			room-script: nad
+			room-post-script: rangerb
+			filter-only
+	
+}
+
+map{ regiondef{
+
+	: pick-building
+
+		' curbuild ++
+		
+		try-special-build if then;
+
+		rowsleft 3 >= 40 %chance and if 0 else
+			rowsleft 2 <= 75 %chance and if 0 else auto-picklocid then
+		then
+		
+		dup if
+			addloc last-loc-pick-script evaluate
+		else drop
+			"trashed" $picklocid addloc	make-a-house
+//			"trashed" $picklocid addloc	make-apartments
+			90 %chance if block-last-build-door then
+		then
+	;
+
+	: pick-lots
+		blocks-init
+			6 to blockh
+			5 to maxrows
+			6 to streeth
+			0.35 to greenspace
+			1 3 rnd to grassylots
+		blocks-start
+
+		pavement
+
+		begin canplot? while
+
+			pick-building next-plot
+
+			canplot? 0= if break then
+			block-middle? if LOT_GRASS lastlot = if 1 else 0 then aplot then
+		repeat
+
+		street-junk
+	;
+
+	: building-pick-setup
+		0 to curbuild
+		5diff %zombs pavement pick-lots
+	;
+	
+} }
+
+regiondef{
+
+	: runme
+	//	special-lot-setup-example
+		mission{ all-leaving }
+		building-pick-setup
+		3 5 rnd for skelscat next
+	;
+
+	 region: new-locations-test
+		w: 30
+		h: 60
+		script: timeofday o'clock
+
+		loc-choice: rangerp-house
+			loc-weight: 40
+			loc-count: 1
+
+		loc-pick-script: make-a-house
+		
+		loc-choice: rangero-house
+			loc-weight: 40
+			loc-count: 1
+
+		loc-pick-script: make-a-house
+
+		loc-choice: rangerb-house
+			loc-weight: 40
+			loc-count: 1
+
+		loc-pick-script: make-a-house
+
+		loc-choice: rangerg-house
+			loc-weight: 40
+			loc-count: 1
+
+		loc-pick-script: make-a-house
+		
+		post-script: runme
+}

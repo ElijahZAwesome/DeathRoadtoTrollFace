@@ -1,0 +1,220 @@
+// ======================
+// DOG TIME
+// ======================
+
+: ispet? .pet@ 0 > ;
+: cpet? cchar ispet? ;
+: dog? .pet@ 1 = ;
+: cat? .pet@ 2 = ;
+: cdog? cchar dog? ;
+: ccat? cchar cat? ;
+: notpet? .pet@ 0= ;
+: cnotpet? cchar notpet? ;
+: pet? .pet@ ;
+: superpet? statmod{ .superdog? } ;
+: isdogpal? statmod{ .dogpal? } ;
+: csuperpet? cchar superpet? ;
+: dogcheck checkchar dog? ; // Not used yet
+: petcheck checkchar ispet? ;
+: dogpalcheck checkchar isdogpal? ;
+: nondogcheck checkchar superpet? checkchar notpet? or ;
+: chumany? cchar superpet? cchar notpet? or ;
+
+: numdogpal team-stack ' isdogpal? stack-filter nip ;
+: dogpal? numdogpal 0 > ;
+
+: somehuman
+ ' nondogcheck pick-team-char
+ 0= if false then;
+ pickchar true
+;
+
+: somepet
+ ' petcheck pick-team-char
+ 0= if false then;
+ pickchar true
+;
+
+: somedogpal
+ ' dogpalcheck pick-team-char
+ 0= if false then;
+ pickchar true
+;
+
+: choosepet somepet if choosechar then ;
+: choosedogpal somedogpal if choosechar then ;
+: choosehuman
+	somehuman if choosechar then
+;
+
+
+// : .dogpal MOD_DOGPAL swap .setmod ;
+// : .dogpal? MOD_DOGPAL swap .ismod? ;
+
+: numhumfilt args( chara )
+	<- chara superpet? <- chara notpet? or
+	<- chara .health@ 0 > and
+;
+
+: numhums team-stack ' numhumfilt stack-filter nip ;
+
+
+: solohuman numhums 2 < ;
+: notsolohuman numhums 1 > ;
+
+: .dogtosuperdog 
+	cdog? if
+		statmod{ dup .superdog .undog }
+	else
+		// statmod{ .unpet }
+		// Decided against WEIRD METHODS preventing pets from driving, but use this if we want to make something absolutely incapable of driving
+		statmod{ dup .superpet .unpet }
+	then
+;
+
+: dog-me-up
+	soloer notpet? if
+		soloer .doggify beep
+	then;
+	soloer statmod{ .superdog? } if "ALREADY SUPERDOG" print bitefx then;
+	soloer ispet? if
+		soloer statmod{ dup .superdog .undog } goodfx
+	then
+
+;
+
+: humany? dup superpet? swap notpet? or ;
+
+: pets ' pet? stack-filter drop ;
+: humanfilt ' humany? stack-filter drop ; 
+
+: cyoa-human-choice team-stack humanfilt cyoa-char-stack-choice ;
+
+: foreach-human-char ( ' word -- ) team-stack humanfilt swap popeach ;
+
+
+
+cyoa{
+
+: cpetderp
+	cdog? if 
+		($ cname .. " sits there, panting, not understanding what to do, at all." $)
+	else
+		($ cname .. " horks something up and otherwise does nothing of value." $)
+	then
+;
+
+: fingspaws
+	superpet? if "paws" else "fingers" then
+	// account for other animals later?
+;
+
+: growlhiss args( chara )
+	<- chara dog? if 
+		"growl" 
+	else 
+		<- chara cat? if 
+			"angry meow" 
+		else
+			"snort"
+		then
+	then
+;
+
+: snarlhiss args( chara )
+	<- chara dog? if 
+		"snarl" 
+	else 
+		<- chara cat? if 
+			"hiss" 
+		else
+			"stomp"
+		then
+	then
+;
+
+: petbite args( chara )
+	<- chara dog? if 
+		"bite" 
+	else 
+		<- chara cat? if 
+			"claw" 
+		else
+			"maul"
+		then
+	then
+;
+	
+: barkmeow args( chara )
+	<- chara dog? if 
+		"bark" 
+	else 
+		<- chara cat? if 
+			"meow" 
+		else
+			"sneeze"
+		then
+	then
+;
+
+: dogcat args( chara )
+	<- chara dog? if 
+		"dog" 
+	else 
+		<- chara cat? if 
+			"cat" 
+		else
+			"critter"
+		then
+	then
+;
+
+: teethclaws args( chara )
+	<- chara dog? if 
+		"teeth" 
+	else 
+		<- chara cat? if 
+			"claws" 
+		else
+			"rage"
+		then
+	then
+;
+
+: Dogcat args( chara )
+	<- chara dog? if 
+		"Dog" 
+	else 
+		<- chara cat? if 
+			"Cat" 
+		else
+			"Critter"
+		then
+	then
+;
+
+: cDogcat cchar Dogcat ;
+: cdogcat cchar dogcat ;
+
+: cdogcat cchar dogcat ;
+: cgrowlhiss cchar growlhiss ;
+: csnarlhiss cchar snarlhiss ;
+: cpetbite cchar petbite ;
+: cbarkmeow cchar barkmeow ;
+: cfingspaws cchar fingspaws ;
+: cteethclaws cchar teethclaws ;
+
+ cyoa-choice: testtest
+  "TESTY Night" cyoa-title!
+  ($ cname .. ", HI!" $) cyoa-text!
+	' .morale++ foreach-human-char
+ ;
+
+ cyoa: test
+ "TEST" cyoa-title!
+ "TEST" cyoa-text!
+
+  ' testtest cyoa-human-choice
+;
+
+}

@@ -1,0 +1,77 @@
+uses base.df
+uses charfilt.df
+uses charstats.df
+uses road.df
+
+cyoa{ road{
+
+cyoa: city5-cyoa
+	cyoa-start
+	"City Before Dusk" cyoa-title!
+	someone choosechar cicon
+	($ Thegroup .. " is travelling close to nightfall and sees a city in the distance. There are less zombies than normal from what can be seen, but that can change fast as it gets even darker." $) cyoa-text! 3 500 tone
+	1 3 halfrnd 18 20 frnd 0 1 rnd zforecast
+//	"kepa/city/nightcity.df" $load-region
+	"paul/building-pick-test-region.df" $load-region
+	"kepa/city-locations.df" $load
+		choice( "Enter city" )choice: premission
+		choice( "Pass it by" )choice
+;
+
+cyoa: city4-cyoa
+	cyoa-start
+	"Afternoon Raid" cyoa-title!
+	someone choosechar cicon
+	($ Thegroup .. " spots an infested city from the road. Scouting it from afar, " .. ghe .. " has to decide whether to fight under the noon sun for supplies." $) cyoa-text! 3 500 tone
+	2 4 halfrnd 12 0 1 rnd zforecast
+//	"kepa/city/afternooncity.df"
+	"paul/building-pick-test-region.df" $load-region
+	"kepa/city-locations.df" $load
+		choice( "Enter city" )choice: premission
+		choice( "Leave it be" )choice
+;
+
+
+cyoa: city3-cyoa
+	cyoa-start
+	"Early Morning Zombies" cyoa-title!
+	someone choosechar cicon
+	($ Thegroup .. " spies a city from a distance. The zombie infestation is thick, but it's early in the day so they should be pretty groggy. At least at first." $) cyoa-text! 3 500 tone
+	4 6 halfrnd 7 10 frnd 0 zforecast
+//	"kepa/city/earlycity.df" $load-region
+	"paul/building-pick-test-region.df" $load-region
+	"kepa/city-locations.df" $load
+		choice( "Explore city" )choice: premission
+		choice( "Ignore it" )choice
+;
+
+cyoa: city2-cyoa
+	cyoa-start
+	"Bustling City" cyoa-title!
+	someone choosechar cicon
+	($ Thegroup .. " finds a city as it starts to turn to the evening. The dead swarm over it, to the point where it might be difficult to even open the car's door." $) cyoa-text! 3 500 tone
+	6 8 halfrnd 17 18 frnd 0 zforecast
+// "kepa/city/hell-region.df" $load-region
+	"paul/building-pick-test-region.df" $load-region
+	"kepa/city-locations.df" $load
+		choice( "ENTER CITY" )choice: premission
+		choice( "AVOID CITY" )choice
+;
+
+cyoa: city1-cyoa
+	cyoa-start
+	"City of the Lost" cyoa-title! 0 to cyoaicon cyoaicon
+	someone choosechar cicon
+	($ Thegroup .. " sees a city in the distance, with zombies so thick that the ground isn't even visible. It's also already nightfall." $) cyoa-text! 3 500 tone
+	7 9 halfrnd 19.1 20.9 frnd 0 zforecast
+//	"kepa/city/die-region.df" $load-region
+	"paul/building-pick-test-region.df" $load-region
+	"kepa/city-locations.df" $load
+		choice( "GO ANYWAY" )choice: premission
+		choice( "NO THANKS" )choice
+;
+
+} }
+
+
+

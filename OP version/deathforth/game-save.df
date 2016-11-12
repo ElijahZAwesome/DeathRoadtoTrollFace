@@ -1,0 +1,62 @@
+(*
+	NOTES:
+		- find a good point to save the game (only on the ROAD) and call save-game. That should be all there is to it.
+	TODO:
+		- Implement script-side data save... all persistent stacks, variables, and other values that need state
+		maintained for the game session to work properly
+*)
+
+USES game-save-char.df
+USES game-save-team.df
+USES game-save-state.df // Save script-side game state variables and such (implement a "dumpstate" here)
+
+filesave{
+
+: save-slot-info
+
+	// Make the evaluation string for the save slot button's display
+	($ 0 #teamchar .name@ .. " with " .. team-count 1- .. " others" .. ", DAY " .. road{ road-trip-days } $)
+
+	// Set icon to a skull if team is dead etc.
+	// team-count 0= if " skullicon " $cat then
+
+	slot-info-name $swrite
+;
+
+: delete-slot-info "" slot-info-name $swrite ;
+
+// : save-slot-data savestr slot-data-name $swrite ;
+
+: save-slot-data slot-data-name $strbuf-write ;
+
+: delete-slot-data "" slot-data-name $swrite ;
+
+: delete-game delete-slot-info delete-slot-data ;
+
+: save-game-state
+	save-slot-info
+
+	save-start
+		dumpchars
+		dumpgame
+		dumpstate
+	save-end
+
+	save-slot-data // SAVE the actual data to disk
+;
+
+: save-global-stats gstats{ save } ;
+
+: save-everything
+	save-game-state
+	save-global-stats
+;
+
+}
+
+last to main-event-do-save
+last to save-the-game
+
+// ' save-game to save-the-game
+
+filesave{ ' delete-game } to delete-the-game

@@ -1,0 +1,37 @@
+uses base.df
+uses charfilt.df
+uses charstats.df
+uses road.df
+
+cyoa{ road{
+
+: anime-timeup
+	64 stpick 0 = not if
+		64 stpick choosechar 65 cchar .specialtype!
+	then;
+	63 stpick 0 = not if
+		63 stpick choosechar 64 cchar .specialtype!
+	then
+	62 stpick 0 = not if
+		62 stpick choosechar 63 cchar .specialtype!
+	then
+	1 to anime-countdown
+;
+
+(* cyoa: ninja-despair
+	bully choosechar cicon
+	"Ninja Tantrum!" cyoa-title!
+	($ cname .. " kicks her door open.
+	" .. "Screw this!" pbold .. "
+	She tumbles out of the car, does a backflip, lands into a crouch, stands up, then throws a smoke bomb and vanishes." $) cyoa-text!
+	TEAM_STATUS_BAD_LEFT cchar .decruit
+	team-count 0 = if
+		"The car drives on for a bit but eventually comes to a stop." +cr +text
+	else
+		($ Thegroup .. " is both startled and impressed by this." $) +cr +text
+	then
+; *)
+
+} }
+
+

@@ -1,0 +1,99 @@
+uses base.df
+uses charfilt.df
+uses charstats.df
+uses road.df
+
+cyoa{ road{
+
+cyoa: inner7-cyoa
+	cyoa-start
+	"Mansion on the Hill" cyoa-title!
+	someone choosechar cicon
+	($ Thegroup .. " drives to a town that's been burnt to the ground. There is a mansion looming on a nearby hill. Even from far away, it looks completely swarmed with zombies." $) cyoa-text! 3 500 tone
+	3 5 halfrnd 9 15 frnd 0 1 rnd zforecast
+	"kepa/inners/hardopen1.df" $load-region
+		choice( "Visit Mansion" )choice: premission
+		choice( "Ignore it" )choice
+;
+
+cyoa: inner6-cyoa
+	cyoa-start
+	"Bullet-Ridden House" cyoa-title!
+	someone choosechar cicon
+	($ Thegroup .. " sees a house from a distance. On getting closer, it looks like a large gunfight happened here between humans. From the house, many groans of the undead can be heard. " $) cyoa-text! 3 500 tone
+	2 3 halfrnd 9 15 frnd 0 1 rnd zforecast
+	"kepa/inners/midopen1.df" $load-region
+		choice( "Explore the House" )choice: premission
+		choice( "Leave it behind" )choice
+;
+
+cyoa: inner5-cyoa
+	cyoa-start
+	"House on the Road" cyoa-title!
+	someone choosechar cicon
+	($ Thegroup .. " spots a house on the road. It looks fairly quiet from the outside, but looking through the windows reveals shapes lurching around in the dark." $) cyoa-text! 3 500 tone
+	0.4 1 frnd 9 15 frnd 0 1 rnd zforecast
+	"kepa/inners/easyopen1.df" $load-region
+		choice( "Enter House" )choice: premission
+		choice( "Pass it by" )choice
+;
+
+cyoa: inner4-cyoa
+	cyoa-start
+	"Busy Hotel" cyoa-title!
+	someone choosechar cicon
+	($ Thegroup .. " spots a hotel while travelling through a ransacked town. It looks like a group of people tried to barricade it, but were interrupted by some disaster. All that's left is the undead." $) cyoa-text! 3 500 tone
+	2 3 halfrnd 9 15 frnd 0 1 rnd zforecast
+	"kepa/inners/midhotel.df" $load-region
+		choice( "Enter Hotel" )choice: premission
+		choice( "Leave it be" )choice
+;
+
+cyoa: inner3-cyoa
+	cyoa-start
+	"Hotel in Quiet Town" cyoa-title!
+	someone choosechar cicon
+	($ Thegroup .. " goes through an empty town, with no supplies to be found and very little zombie activity. One small hotel seems to have more undead roaming through it than the rest of the town." $) cyoa-text! 3 500 tone
+	0.4 1 frnd 9 15 frnd 0 1 rnd zforecast
+	"kepa/inners/easyhotel.df" $load-region
+		choice( "Explore Hotel" )choice: premission
+		choice( "Leave Town" )choice
+;
+
+// Below are obsolete and need to be replaced, are actually covered in k-cities anyway
+
+cyoa-choice: inner2-go
+	($ Thegroup .. " gets ready to face the city. Hopefully the danger is worth it." $) cyoa-text!
+	"kepa/city/hell-region.df" $load-region entercity
+;
+
+cyoa: inner2-cyoa
+	cyoa-start
+	"Bustling City" cyoa-title!
+	someone choosechar cicon
+	($ Thegroup .. " finds a city as it starts to turn to the evening. The dead swarm over it.
+	With a city this dangerous, it's possible that there are some supplies untouched by other looters. Or supplies dropped by scavengers that tried and failed before you." $) cyoa-text! 3 500 tone
+		choice( "ENTER CITY" )choice: inner2-go
+		choice( "AVOID CITY" )choice
+;
+
+cyoa-choice: inner1-go
+	($ Thegroup .. " gets ready for an adventure. 
+	First challenge: merely getting out of the car safely." $) cyoa-text!
+	"kepa/city/die-region.df" $load-region entercity
+;
+cyoa: inner1-cyoa
+	cyoa-start
+	"City of the Lost" cyoa-title! 0 to cyoaicon cyoaicon
+	someone choosechar cicon
+	($ Thegroup .. " sees a city in the distance, with zombies so thick that the ground isn't even visible. It's also already nightfall.
+	
+	It would be prudent to not go here, one would have to be incredibly desperate for supplies." $) cyoa-text! 3 500 tone
+		choice( "GO ANYWAY" )choice: inner1-go
+		choice( "NO THANKS" )choice
+;
+
+} }
+
+
+

@@ -1,0 +1,38 @@
+uses paul/building-pick-layout-test.df
+
+load? events/city/city-locations.df
+
+regiondef{
+
+	: runme
+	//	special-lot-setup-example
+		building-pick-setup
+	;
+
+	 region: new-locations-test
+		w: 30
+		h: 45
+		script: timeofday o'clock
+
+		loc-choice: house
+			loc-weight: 40
+			loc-count: 8
+
+			loc-pick-script: make-a-house
+
+		// NOTE: You could use a draw deck for all these shops too if you wanted, just have one loc-choice like
+		(*
+			loc-choice: some-business
+				loc-weight: 100
+				loc-count: 1
+				loc-pick-script: plot-a-random-business
+		*)
+		// and define 'some-business' in city-locations.df locdefs
+
+		loc-choice: apartments
+			loc-weight: 30
+			loc-count: 3
+			loc-pick-script: make-apartments
+
+		post-script: runme
+}
